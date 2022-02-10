@@ -1,0 +1,154 @@
+#!/bin/sh
+
+# David Adams
+# February 2022
+#
+# Scripts for running and building DUNE SW.
+# Project is installed in
+#   DUNE_INSTALL_DIR          if DUNE_INSTALL_BYPKG = false
+#   DUNE_INSTALL_DIR/PROJECT  otherwise
+# Build is done at
+#   DUNE_BUILD_DIR/PROJECT
+
+PROJECT=dunesw-support
+
+INSDIR=
+while [ "${1:0:1}" = '-' ]; do
+  FLG=$1
+  shift
+  if [ "$FLG" = "-i" ]; then
+    INSDIR=$1
+    shift
+  fi
+done
+ARGS="$*"
+
+# Assign source directory.
+SRCDIR=$(dirname $0)
+SRCDIR=$(readlink -f $SRCDIR)
+
+# Assign install directory.
+if [ -z "$INSDIR" ]; then
+  INSBASE=$DUNE_INSTALL_DIR
+  if [ -z "$INSBASE" ]; then
+    echo Please define the installation directory: DUNE_INSTALL_DIR
+    exit 1
+  fi
+  INSBYPKG=${DUNE_INSTALL_BYPKG:-true}
+  if [ $INSBYPKG = false ]; then
+    INSDIR=$INSBASE
+  else
+    INSDIR=$INSBASE/$PROJECT
+  fi
+fi
+INSDIR=$(readlink -f $INSDIR)
+mkdir -p $INSDIR
+if [ ! -r $INSDIR -o ! -d $INSDIR ]; then
+  echo Unable to create/use installation directory: $INSDIR
+  exit 1
+fi
+
+# Process arguments.
+if [ -z "$ARGS" ]; then ARGS=all; fi
+DOCLEANBUILD=
+DOCLEANINSTALL=
+DOCMAKE=
+DOBUILD=
+DOINSTALL=
+for ARG in $ARGS; do
+  if [ "$ARG" = help ]; then
+    echo Usage: $0 OPT
+    #echo "          cmake - runs cmake to generate build area"
+    #echo "           make - runs make in the build area to compile, etc."
+    echo "        install - install from the build area"
+    echo "  all [default] - runs cmake, make and install"
+    echo "   cleaninstall - removes the installation area"
+    #echo "      cleanmake - removes the build area"
+    echo "          clean - removes the installation area"
+    exit 0
+  elif [ "$ARG" = cleaninstall ]; then
+    DOCLEANINSTALL=true
+  elif [ "$ARG" = cleanmake ]; then
+    DOCLEANBUILD=true
+  elif [ "$ARG" = clean ]; then
+    DOCLEANBUILD=true
+    DOCLEANINSTALL=true
+  elif [ $ARG = cmake ]; then
+    DOCMAKE=true
+  elif [ $ARG = make ]; then
+    DOBUILD=true
+  elif [ $ARG = install ]; then
+    DOINSTALL=true
+  elif [ $ARG = all ]; then
+    DOCMAKE=true
+    DOBUILD=true
+    DOINSTALL=true
+  else
+    echo Invalid option: $ARG
+    exit 1
+  fi
+done
+CATFILE=$INSDIR/.$PROJECT.cat
+echo
+echo
+echo  Source: $SRCDIR
+#echo   Build: $BLDDIR
+echo Install: $INSDIR
+echo Catalog: $CATFILE
+
+if [ -n "$DOINSTALL" -a -r $CATFILE ]; then
+  DOCLEANINSTALL=true
+fi
+
+if [ -n "$DOCLEANINSTALL" ]; then
+  echo
+  echo Removing installation of $PROJECT...
+  if [ ! -r $CATFILE ]; then
+    echo Unable to find installation catalog $CATFILE
+    exit 1
+  fi
+  for FILE in $(cat $CATFILE) $CATFILE; do
+    if [ ! -r $FILE ]; then
+      echo "WARNING: file not found: $FILE"
+    else
+      echo Removing $FILE.
+      rm $FILE
+    fi
+  done
+fi
+
+if [ -n "$DOINSTALL" ]; then
+  echo
+  if [ -r $CATFILE ]; then
+    echo Found catalog from earlier installation: $CATFILE
+    echo Please clean or remove catalog.
+    exit 1
+  fi
+  echo Installing $PROJECT...
+  if [ ! -d $INSDIR/bin ]; then
+    echo Creating $INSDIR/bin
+    mkdir $INSDIR/bin
+  fi
+  rm -f $CATFILE
+  touch CATFILE
+  for FILE in $(ls $SRCDIR/bin); do
+    INFILE=$SRCDIR/bin/$FILE
+    OUTFILE=$INSDIR/bin/$FILE
+    echo Installing $OUTFILE
+    if [ -r $OUTFILE ]; then
+      echo WARNING: Overwriting $OUTFILE
+    fi
+    if cp $INFILE $OUTFILE; then
+      chmod +x $OUTFILE
+      echo $OUTFILE >>$CATFILE
+    fi
+  done
+  SETFILE=$(readlink -f $INSDIR/setup.sh)
+  if [ -r $SETFILE ]; then
+    echo Keeping exisng setup: $SETFILE
+  else
+    echo Creating setup file: $SETFILE
+    touch $SETFILE
+    echo PATH=$INSDIR/bin:'$PATH' >>$SETFILE
+  fi
+fi

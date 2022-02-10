@@ -1,0 +1,52 @@
+#!/bin/sh
+#
+# dune-run
+# David Adams
+# February 2022
+#
+# A script to run  a command in a dunesw enviroment.
+
+ARG=$1
+REL=$DUNE_RUN_RELEASE
+SETUP=$DUNE_RUN_SETUP
+LEVEL=0
+while [[ $# -gt 0 ]]; do
+  if [ "$ARG" = "-h" ]; then
+    echo Usage: $0 [-s SETUP] [-r REL] [-v LEVEL] COM
+    echo "  SETUP - Path to a script that is sourced to set up the env."
+    echo "          Default is env variable DUNE_RUN_SETUP."
+    echo "  REL - Release tag (e.g. v09_42_00_00)"
+    echo "        Default is env variable DUNE_RUN_RELEASE."
+    echo "  LEVEL - 0 - No output from this script (default)."
+    echo "          1 - Infomational messages displayed."
+    echo "          2 - Infomational messages displayed and command is not run."
+    echo "If both setup and release are provided then the release is"
+    echo "passed as an argument to the setup."
+    echo "If only the setup is provided then the release is set up from CVMFS"
+    exit 0
+  elif [ "$ARG" = "-r" ]; then
+    shift
+    REL=$1
+    shift
+  elif [ "$ARG" = "-s" ]; then
+    shift
+    SETUP=$1
+    shift
+  elif [ "$ARG" = "-v" ]; then
+    shift
+    LEVEL=${1:-0}
+    shift
+  else
+    COM="$@"
+    break
+  fi
+done
+
+MYNAME="dune-run: "
+
+
+
+echo
+
+
+

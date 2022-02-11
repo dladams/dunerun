@@ -6,20 +6,25 @@
 #
 # A script to run  a command in a dunesw enviroment.
 
-ARG=$1
 REL=$DUNE_RUN_RELEASE
-SETUP=$DUNE_RUN_SETUP
+SETUP=${DUNE_RUN_SETUP:-$DUNESW_SUPPORT/bin/setup-dunesw.sh}
+SETUP=$DUNESW_SUPPORT_SETUP
 LEVEL=0
 while [[ $# -gt 0 ]]; do
+  ARG=$1
   if [ "$ARG" = "-h" ]; then
-    echo Usage: $0 [-s SETUP] [-r REL] [-v LEVEL] COM
+    echo "Usage: $0 [-s SETUP] [-r REL] [-d LEVEL] COM"
+    echo "Runs command COM in the environment defined by \"source SETUP REL\""
     echo "  SETUP - Path to a script that is sourced to set up the env."
-    echo "          Default is env variable DUNE_RUN_SETUP."
-    echo "  REL - Release tag (e.g. v09_42_00_00)"
-    echo "        Default is env variable DUNE_RUN_RELEASE."
-    echo "  LEVEL - 0 - No output from this script (default)."
-    echo "          1 - Infomational messages displayed."
-    echo "          2 - Infomational messages displayed and command is not run."
+    echo "          Default is env variable DUNESW_SUPPORT_SETUP."
+    echo "          Provided here:"
+    echo "            setup-dune.sh - Sets up dune w/o any packages."
+    echo "            setup-dunesw.sh - Sets up dune w/ dunesw with REL=VERS:QUAL"
+    echo "  REL - Release tag (e.g. v09_42_03_00 or v09_42_03_00:c7:prof)"
+    echo "        Default is env variable DUNESW_SUPPORT_RELEASE."
+    echo "  LEVEL - 0 - Command is executed with no output from this script (default)."
+    echo "          1 - Command is executed with infomational messages."
+    echo "          2 - Command and infomational messages are displayed w/o execution."
     echo "If both setup and release are provided then the release is"
     echo "passed as an argument to the setup."
     echo "If only the setup is provided then the release is set up from CVMFS"
@@ -32,7 +37,7 @@ while [[ $# -gt 0 ]]; do
     shift
     SETUP=$1
     shift
-  elif [ "$ARG" = "-v" ]; then
+  elif [ "$ARG" = "-d" ]; then
     shift
     LEVEL=${1:-0}
     shift
@@ -44,9 +49,26 @@ done
 
 MYNAME="dune-run: "
 
+if [ $LEVEL -gt 0 ]; then
+  echo "$MYNAME    SETUP: $SETUP"
+  echo "$MYNAME  RELEASE: $RELEASE"
+  echo "$MYNAME      COM: $@"
+fi
 
+if [ -n "$SETUP" ]; then
+  if [ $LEVEL -gt 0 ]; then echo $MYNAME Setting up.; fi
+  if [ $LEVEL -eq 2 ]; then
+     echo $MYNAME '>' source $SETUP $REL
+  else
+    source $SETUP $REL
+  fi
+fi
 
-echo
-
-
-
+if [ $# -gt 0 ]; then
+  if [ $LEVEL -gt 0 ]; then echo $MYNAME Executing.; fi
+  if [ $LEVEL -eq 2 ]; then
+     echo $MYNAME '>' $@
+  else
+    $@
+  fi
+fi

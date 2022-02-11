@@ -139,16 +139,19 @@ if [ -n "$DOINSTALL" ]; then
       echo WARNING: Overwriting $OUTFILE
     fi
     if cp $INFILE $OUTFILE; then
-      chmod +x $OUTFILE
+      if [ ${FILE:0:5} != setup ]; then
+        chmod +x $OUTFILE
+      fi
       echo $OUTFILE >>$CATFILE
     fi
   done
   SETFILE=$(readlink -f $INSDIR/setup.sh)
   if [ -r $SETFILE ]; then
-    echo Keeping exisng setup: $SETFILE
+    echo Keeping existing setup: $SETFILE
   else
     echo Creating setup file: $SETFILE
     touch $SETFILE
+    echo 'export DUNESW_SUPPORT='$INSDIR >>$SETFILE
     echo PATH=$INSDIR/bin:'$PATH' >>$SETFILE
   fi
 fi

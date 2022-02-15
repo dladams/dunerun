@@ -1,7 +1,19 @@
 import os
 
 class DuneRun:
-    def __init__(self, senv='', sopt='', dbg=0):
+    def __init__(self, senv='', sopt='', dbg=0, lev=0):
+        """
+        Ctor for class that runs dune commands.
+        senv = ' ' - Run in bash (no dune set up).
+               'dune' - Set up dune env but no products.
+               'dunesw' - Set up dunesw.
+        sopt = string passed to setup, e.g. 'e20:prof' for dunesw.
+        dbg = Output level for messages here: 0 is quietest.
+        lev = Output level (in addition to stdout, stderr) for run commands:
+              0 - Command is executed with no extra messages.
+              1 - Command is executed with informational messages."
+              2 - Command and infomational messages are displayed. No command execution."
+        """
         myname = 'DuneRun'
         self.dbg = dbg
         self.scoms = []

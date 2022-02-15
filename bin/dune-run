@@ -23,7 +23,7 @@ while [[ $# -gt 0 ]]; do
     echo "  REL - Release tag (e.g. v09_42_03_00 or v09_42_03_00:c7:prof)"
     echo "        Default is env variable DUNESW_SUPPORT_RELEASE."
     echo "  LEVEL - 0 - Command is executed with no output from this script (default)."
-    echo "          1 - Command is executed with infomational messages."
+    echo "          1 - Command is executed with informational messages."
     echo "          2 - Command and infomational messages are displayed w/o execution."
     echo "If both setup and release are provided then the release is"
     echo "passed as an argument to the setup."

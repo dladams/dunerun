@@ -128,12 +128,28 @@ if [ -n "$DOINSTALL" ]; then
   if [ ! -d $INSDIR/bin ]; then
     echo Creating $INSDIR/bin
     mkdir $INSDIR/bin
+    mkdir $INSDIR/python
   fi
   rm -f $CATFILE
-  touch CATFILE
+  touch $CATFILE
   for FILE in $(ls $SRCDIR/bin); do
     INFILE=$SRCDIR/bin/$FILE
     OUTFILE=$INSDIR/bin/$FILE
+    echo Installing $OUTFILE
+    if [ -r $OUTFILE ]; then
+      echo WARNING: Overwriting $OUTFILE
+    fi
+    if cp $INFILE $OUTFILE; then
+      if [ ${FILE:0:5} != setup ]; then
+        chmod +x $OUTFILE
+      fi
+      echo $OUTFILE >>$CATFILE
+    fi
+  done
+  for FILE in $(ls $SRCDIR/python/*.py); do
+    FILE=$(basename $FILE)
+    INFILE=$SRCDIR/python/$FILE
+    OUTFILE=$INSDIR/python/$FILE
     echo Installing $OUTFILE
     if [ -r $OUTFILE ]; then
       echo WARNING: Overwriting $OUTFILE

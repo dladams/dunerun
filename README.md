@@ -8,6 +8,7 @@ cd any-directory
 git clone https://github.com/dladams/dunesw-support.git
 ./dunesw-support/build -i MY-INSTALL-PATH
 </pre>
+The option can be omitted if you have defined env variable DUNE_INSTALL_DIR.
 
 To set up to use the package in this or any future session:
 <pre>

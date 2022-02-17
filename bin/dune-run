@@ -6,23 +6,24 @@
 #
 # A script to run  a command in a dunesw enviroment.
 
-REL=$DUNE_RUN_RELEASE
-SETUP=${DUNE_RUN_SETUP:-$DUNESW_SUPPORT/bin/setup-dunesw.sh}
-SETUP=$DUNESW_SUPPORT_SETUP
+ENV=$DUNESW_SUPPORT_ENV
+REL=${DUNESW_SUPPORT_RELEASE:-v09_42_03_00}
 LEVEL=0
 while [[ $# -gt 0 ]]; do
   ARG=$1
   if [ "$ARG" = "-h" ]; then
-    echo "Usage: $0 [-s SETUP] [-r REL] [-d LEVEL] COM"
-    echo "Runs command COM in the environment defined by \"source SETUP REL\""
-    echo "  SETUP - Path to a script that is sourced to set up the env."
-    echo "          Default is env variable DUNESW_SUPPORT_SETUP."
-    echo "          Provided here:"
-    echo "            setup-dune.sh - Sets up dune w/o any packages."
-    echo "            setup-dunesw.sh - Sets up dune w/ dunesw with REL=VERS:QUAL"
+    echo "Usage: $0 [-e ENV] [-r REL] [-d LEVEL] COM"
+    echo "Runs command COM in the environment defined by \"source setup-ENV.sh REL\""
+    echo "  ENV - Environment name."
+    echo "        Default is env variable DUNESW_SUPPORT_ENV."
+    echo "        Provided here:"
+    echo "          dune - Sets up dune w/o any packages."
+    echo "          dunesw - Sets up dune w/ dunesw with REL=VERS:QUAL"
+    echo "        If udefined or '.', the command is run without setup."
     echo "  REL - Release tag (e.g. v09_42_03_00 or v09_42_03_00:c7:prof)"
     echo "        Default is env variable DUNESW_SUPPORT_RELEASE."
-    echo "  LEVEL - 0 - Command is executed with no output from this script (default)."
+    echo "  LEVEL - 0 - Command is executed with no output from this script or"
+    echo "              from the setup (default)"
     echo "          1 - Command is executed with informational messages."
     echo "          2 - Command and infomational messages are displayed w/o execution."
     echo "If both setup and release are provided then the release is"
@@ -33,9 +34,9 @@ while [[ $# -gt 0 ]]; do
     shift
     REL=$1
     shift
-  elif [ "$ARG" = "-s" ]; then
+  elif [ "$ARG" = "-e" ]; then
     shift
-    SETUP=$1
+    ENV=$1
     shift
   elif [ "$ARG" = "-d" ]; then
     shift
@@ -50,17 +51,20 @@ done
 MYNAME="dune-run: "
 
 if [ $LEVEL -gt 0 ]; then
-  echo "$MYNAME    SETUP: $SETUP"
+  echo "$MYNAME      ENV: $ENV"
   echo "$MYNAME  RELEASE: $RELEASE"
   echo "$MYNAME      COM: $@"
 fi
 
-if [ -n "$SETUP" ]; then
+if [ -n "$ENV" -a "$ENV" != "." ]; then
+  SETUP_FILE=setup-$ENV.sh
   if [ $LEVEL -gt 0 ]; then echo $MYNAME Setting up.; fi
   if [ $LEVEL -eq 2 ]; then
-     echo $MYNAME '>' source $SETUP $REL
+     echo $MYNAME '>' source $SETUP_FILE $REL 2>&1 1>/dev/null
+  elif [ $LEVEL -eq 0 ]; then
+     source $SETUP_FILE $REL 2>&1 1>/dev/null
   else
-    source $SETUP $REL
+    source $SETUP_FILE $REL
   fi
 fi
 

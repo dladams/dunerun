@@ -16,6 +16,7 @@ class DuneRun:
         """
         myname = 'DuneRun'
         self.dbg = dbg
+        self.lev = lev
         self.scoms = []
         if len(senv):
             scom = ''
@@ -32,7 +33,10 @@ class DuneRun:
         myname ='DuneRun::run'
         line = ' '
         for scom in self.scoms:
-            line = line + 'source ' + scom + '; '
+            line += 'source ' + scom
+            if self.lev == 0:
+                line += " 2>&1 1>/dev/null"
+            line += '; '
         line += com
         if self.dbg: print(f"{myname}: {line}")
         os.system(line)

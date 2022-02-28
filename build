@@ -29,9 +29,13 @@ SRCDIR=$(readlink -f $SRCDIR)
 
 # Assign install directory.
 if [ -z "$INSDIR" ]; then
-  INSBASE=$DUNE_INSTALL_DIR
+  INSBASE=$(echo $DUNE_INSTALL_DIR | sed 's/%VERSION%/common/g')
   if [ -z "$INSBASE" ]; then
     echo Please define the installation directory: DUNE_INSTALL_DIR
+    exit 1
+  fi
+  if [ ! -r $INSBASE ]; then
+    echo Please create the installation base directory: $INSBASE
     exit 1
   fi
   INSBYPKG=${DUNE_INSTALL_BYPKG:-true}
@@ -129,6 +133,7 @@ if [ -n "$DOINSTALL" ]; then
     echo Creating $INSDIR/bin
     mkdir $INSDIR/bin
     mkdir $INSDIR/python
+    mkdir $INSDIR/ipynb
   fi
   rm -f $CATFILE
   touch $CATFILE
@@ -150,6 +155,21 @@ if [ -n "$DOINSTALL" ]; then
     FILE=$(basename $FILE)
     INFILE=$SRCDIR/python/$FILE
     OUTFILE=$INSDIR/python/$FILE
+    echo Installing $OUTFILE
+    if [ -r $OUTFILE ]; then
+      echo WARNING: Overwriting $OUTFILE
+    fi
+    if cp $INFILE $OUTFILE; then
+      if [ ${FILE:0:5} != setup ]; then
+        chmod +x $OUTFILE
+      fi
+      echo $OUTFILE >>$CATFILE
+    fi
+  done
+  for FILE in $(ls $SRCDIR/ipynb/*.ipynb); do
+    FILE=$(basename $FILE)
+    INFILE=$SRCDIR/ipynb/$FILE
+    OUTFILE=$INSDIR/ipynb/$FILE
     echo Installing $OUTFILE
     if [ -r $OUTFILE ]; then
       echo WARNING: Overwriting $OUTFILE

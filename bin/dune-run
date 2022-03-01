@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # dune-run
 # David Adams
@@ -7,7 +7,7 @@
 # A script to run  a command in a dunesw enviroment.
 
 ENV=$DUNESW_SUPPORT_ENV
-REL=${DUNESW_SUPPORT_RELEASE:-v09_42_03_00}
+REL=${DUNESW_SUPPORT_RELEASE:-v09_42_04_00}
 LEVEL=0
 while [[ $# -gt 0 ]]; do
   ARG=$1
@@ -29,6 +29,7 @@ while [[ $# -gt 0 ]]; do
     echo "If both setup and release are provided then the release is"
     echo "passed as an argument to the setup."
     echo "If only the setup is provided then the release is set up from CVMFS"
+    echo "Command 'shell' starts an interactive bash shell in the environment."
     exit 0
   elif [ "$ARG" = "-r" ]; then
     shift
@@ -49,30 +50,50 @@ while [[ $# -gt 0 ]]; do
 done
 
 MYNAME="dune-run: "
-
 if [ $LEVEL -gt 0 ]; then
-  echo "$MYNAME      ENV: $ENV"
-  echo "$MYNAME  RELEASE: $RELEASE"
-  echo "$MYNAME      COM: $@"
+  echo "$MYNAME ENV: $ENV"
+  echo "$MYNAME REL: $REL"
+  echo "$MYNAME COM: $@"
 fi
 
-if [ -n "$ENV" -a "$ENV" != "." ]; then
-  SETUP_FILE=setup-$ENV.sh
-  if [ $LEVEL -gt 0 ]; then echo $MYNAME Setting up.; fi
-  if [ $LEVEL -eq 2 ]; then
-     echo $MYNAME '>' source $SETUP_FILE $REL 2>&1 1>/dev/null
-  elif [ $LEVEL -eq 0 ]; then
-     source $SETUP_FILE $REL 2>&1 1>/dev/null
-  else
-    source $SETUP_FILE $REL
-  fi
-fi
 
-if [ $# -gt 0 ]; then
-  if [ $LEVEL -gt 0 ]; then echo $MYNAME Executing.; fi
-  if [ $LEVEL -eq 2 ]; then
-     echo $MYNAME '>' $@
-  else
-    $@
+if [ "$COM" = shell ]; then
+  if [ $LEVEL -gt 0 ]; then
+    echo "$MYNAME Starting shell..."
   fi
+  NEWPS1=$ENV
+  if [ -n "$REL" ]; then
+    NEWPS1=$NEWPS1-$REL
+  fi
+  NEWPS1=${NEWPS1}'> '
+  if [ $LEVEL -gt 0 ]; then
+    echo "$MYNAME Setting prompt $NEWPS1"
+  fi
+  bash --rcfile <(echo 'source dune-run -e '$ENV' -r '$REL'; export PS1="'$NEWPS1'"')
+
+else
+
+  if [ -n "$ENV" -a "$ENV" != "." ]; then
+    SETUP_FILE=setup-$ENV.sh
+    if [ $LEVEL -gt 0 ]; then echo $MYNAME Setting up.; fi
+    if [ $LEVEL -eq 2 ]; then
+       echo $MYNAME '>' source $SETUP_FILE $REL 2>&1 1>/dev/null
+    elif [ $LEVEL -eq 0 ]; then
+       source $SETUP_FILE $REL 2>&1 1>/dev/null
+    else
+      source $SETUP_FILE $REL
+    fi
+  fi
+
+  if [ $# -gt 0 ]; then
+    if [ $LEVEL -gt 0 ]; then echo $MYNAME Executing.; fi
+    if [ $LEVEL -eq 2 ]; then
+      echo $MYNAME '>' $@
+    else
+      if [ ${#@} > 0 ]; then
+        $@
+      fi
+    fi
+  fi
+
 fi

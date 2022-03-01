@@ -104,7 +104,7 @@ iceberg5cond_dqm1.fcl is ok
 All 13 fcl files processed successfully.
 </pre>
 
-Use command 'shell' to start an interactive shell in the specified environment, e.g.
+Significant time is required to set up up the *dunesw* environment when the each above commands are run. Use the special command 'shell' to start an interactive shell in the specified environment so this set up only has to be performed once. For example:
 <pre>
 > dune-run -e dunesw -r v09_42_04_00:c7:prof shell
 dunesw-v09_42_04_00:c7:prof> duneHelp

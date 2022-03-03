@@ -12,7 +12,7 @@
 #    with [dune-dev](https://github.com/dladams/dune-dev) is done.
 # -- If a directory containing setup.sh, then that file is sourced.
 # -- If no '/' is found then dunesw version VERS with qualifier QUAL is set
-#    up from cvmfs. Thos values are obrtained assuming that REL is VERS:QUAL
+#    up from cvmfs. Those values are obrtained assuming that REL is VERS:QUAL
 #    or VERS:DEFQUAL with the latter defined below (and subject to change).
 
 DEFQUAL=e20:prof
@@ -21,7 +21,7 @@ REL=$1
 DRELDIR=
 RELDIR=
 RELFIL=
-if grep / <(echo $REL) 2>&1 1>/dev/null; then
+if grep '/' <(echo $REL) 2>&1 1>/dev/null; then
   if [ -d $REL ]; then
     if [ -r $REL/dunesetup.sh ]; then
       DRELDIR=$REL

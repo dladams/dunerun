@@ -1,4 +1,10 @@
 import os
+import subprocess
+
+def version():
+    """Return package version string"""
+    scom = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bin', 'dunesw-supportVersion')
+    return subprocess.run(['bash', '-c', scom], capture_output=True).stdout.decode().strip()
 
 class DuneRun:
     def __init__(self, senv='', sopt='', dbg=0, lev=0):
@@ -39,4 +45,5 @@ class DuneRun:
             line += '; '
         line += com
         if self.dbg: print(f"{myname}: {line}")
-        os.system(line)
+        #os.system(line)         # This uses sh instead of bash and can't parse setup-dunesw.sh
+        subprocess.run(['bash', '-c', line])

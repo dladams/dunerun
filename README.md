@@ -142,3 +142,5 @@ exit
 ## Running from python
 The python class *DuneRun* in module *dunerun* provides similar fuctionality at the python command line. For examples of use, see the [dunerun notebook](ipynb/dunerun.ipynb).
 
+## Development plans
+Finish adding support for setting up from a local release directory.

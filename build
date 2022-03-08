@@ -187,7 +187,7 @@ if [ -n "$DOINSTALL" ]; then
   else
     echo Creating setup file: $SETFILE
     touch $SETFILE
-    echo 'export DUNESW_SUPPORT='$INSDIR >>$SETFILE
+    echo 'export DUNERUN_DIR='$INSDIR >>$SETFILE
     echo PATH=$INSDIR/bin:'$PATH' >>$SETFILE
     echo $OUTFILE >>$CATFILE
   fi

@@ -10,7 +10,7 @@
 # Build is done at
 #   DUNE_BUILD_DIR/PROJECT
 
-PROJECT=dunesw-support
+PROJECT=dunerun
 
 INSDIR=
 while [ "${1:0:1}" = '-' ]; do
@@ -189,5 +189,6 @@ if [ -n "$DOINSTALL" ]; then
     touch $SETFILE
     echo 'export DUNESW_SUPPORT='$INSDIR >>$SETFILE
     echo PATH=$INSDIR/bin:'$PATH' >>$SETFILE
+    echo $OUTFILE >>$CATFILE
   fi
 fi

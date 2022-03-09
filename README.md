@@ -142,6 +142,43 @@ exit
 >
 </pre>
 
+## Using a local build
+It is possible to use the *dunesw* environment with a local build by specifying the release with the path to a setup file or to a build directory constructed with [dune-dev](https://github.com/dladams/dune-dev). Here is an example using my standard development area:
+<pre>
+dunerun> dune-run -e dunesw -r ~dladams/proc/build/dev01 shell
+Setting up with dune-dev at /home/dladams/proc/build/dev01
+dunesw-/home/dladams/proc/build/dev01> duneHelp
+Welcome to dunetpc 
+Some available commands:
+              duneHelp - Display information about the current setup of dunetpc.
+                   lar - Run the art/larsoft event looop e.g. to process event data.
+  product_sizes_dumper - Display the products and size in an event data file.
+               fcldump - Display the resolved configuration for a fcl file.
+               liblist - List available plugin libraries.
+        pdChannelRange - Display protoDUNE channel grops and ranges.
+           duneRunData - Display run data for a run.
+           duneTestFcl - Test some high-level fcl configurations.
+Use option "-h" with any of these for more information.
+dunesw-/home/dladams/proc/build/dev01> duneTestFcl
+iceberg3_decode_reco.fcl is ok
+iceberg4a_decode_reco.fcl is ok
+iceberg4b_decode_reco.fcl is ok
+iceberg5_decode_reco.fcl is ok
+standard_reco_dune10kt_nu_1x2x6.fcl is ok
+vdcoldbox_raw_dataprep.fcl is ok
+vdcoldbox_raw_tdedataprep.fcl is ok
+hdcoldbox_raw_dataprep.fcl is ok
+protodune_dqm.fcl is ok
+protodune_dqm2.fcl is ok
+iceberg3_dqm1.fcl is ok
+iceberg4_dqm1.fcl is ok
+iceberg5cond_dqm1.fcl is ok
+All 13 fcl files processed successfully.
+dunesw-/home/dladams/proc/build/dev01> exit
+exit
+dunerun> 
+</pre>
+
 ## Running from python
 The python class *DuneRun* in module *dunerun* provides similar fuctionality from the python command line. For examples of use, see the [dunerun notebook](ipynb/dunerun.ipynb).
 

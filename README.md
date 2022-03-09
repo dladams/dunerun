@@ -1,5 +1,8 @@
 # dunerun
-Support for running commands and building SW for DUNE.
+David Adams  
+March 2022  
+  
+Support for using DUNE software from the linux command line and python.
 
 ## Installation and set up
 To install this package at MY-INSTALL-PATH:
@@ -140,7 +143,7 @@ exit
 </pre>
 
 ## Running from python
-The python class *DuneRun* in module *dunerun* provides similar fuctionality at the python command line. For examples of use, see the [dunerun notebook](ipynb/dunerun.ipynb).
+The python class *DuneRun* in module *dunerun* provides similar fuctionality from the python command line. For examples of use, see the [dunerun notebook](ipynb/dunerun.ipynb).
 
 ## Development plans
 Finish adding support for setting up from a local release directory.

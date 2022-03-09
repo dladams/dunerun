@@ -2,12 +2,12 @@
 #
 # dune-run
 # David Adams
-# February 2022
+# March 2022
 #
 # A script to run  a command in a dunesw enviroment.
 
-ENV=$DUNESW_SUPPORT_ENV
-REL=${DUNESW_SUPPORT_RELEASE:-v09_42_04_00}
+ENV=${DUNESW_SUPPORT_ENV:-dunesw}
+REL=${DUNESW_SUPPORT_RELEASE:-v09_44_00_02}
 LEVEL=0
 while [[ $# -gt 0 ]]; do
   ARG=$1
@@ -15,20 +15,24 @@ while [[ $# -gt 0 ]]; do
     echo "Usage: $0 [-e ENV] [-r REL] [-d LEVEL] COM"
     echo "Runs command COM in the environment defined by \"source setup-ENV.sh REL\""
     echo "  ENV - Environment name."
-    echo "        Default is env variable DUNESW_SUPPORT_ENV."
     echo "        Provided here:"
     echo "          dune - Sets up dune w/o any packages."
-    echo "          dunesw - Sets up dune w/ dunesw with REL=VERS:QUAL"
-    echo "        If udefined or '.', the command is run without setup."
-    echo "  REL - Release tag (e.g. v09_42_03_00 or v09_42_03_00:c7:prof)"
-    echo "        Default is env variable DUNESW_SUPPORT_RELEASE."
+    echo "          dunesw - Sets up dune w/ dunesw with argument REL"
+    echo "        If undefined or '.', the command is run without setup."
+    echo "        Default is env variable DUNESW_SUPPORT_ENV or dunesw."
+    echo "  REL - Release tag passed to the environment setup script."
+    echo "        For dunesw, this can be"
+    echo "          -- VERS or VERS:QUAL where VERS is the version and QUAL is the"
+    echo "             qualifier (e.g. v09_42_03_00 or v09_42_03_00:c7:prof),"
+    echo "          -- the path to file that sets up a local build or installation"
+    echo "             of dunesw, or"
+    echo "          -- the path to a directory holding a local build made with"
+    echo "             dune-dev (See https://github.com/dladams/dune-dev)"
+    echo "        Default is env variable DUNESW_SUPPORT_RELEASE or a recent release."
     echo "  LEVEL - 0 - Command is executed with no output from this script or"
     echo "              from the setup (default)"
     echo "          1 - Command is executed with informational messages."
     echo "          2 - Command and infomational messages are displayed w/o execution."
-    echo "If both setup and release are provided then the release is"
-    echo "passed as an argument to the setup."
-    echo "If only the setup is provided then the release is set up from CVMFS"
     echo "Command 'shell' starts an interactive bash shell in the environment."
     exit 0
   elif [ "$ARG" = "-r" ]; then

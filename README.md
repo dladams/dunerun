@@ -179,8 +179,67 @@ exit
 dunerun> 
 </pre>
 
+## Building analysis packages
+Like this package, most of my analysis packages provide a script *build* that can be used to build and install that package. In most cases, the build is on top of DUNE software and requires setup of some development packages including *cmake*. The environment *dunebuild* sets up *dunesw* and those develpment packages. Here is an example session installing [duneproc](https://github.com/dladams/duneproc).
+<pre>
+[dladams@jupyter-dladams ~]$ source $HOME/proc/install/common/dunerun/setup.sh
+
+[dladams@jupyter-dladams ~]$ cd $HOME/proc/pkgs
+
+[dladams@jupyter-dladams pkgs]$ git clone https://github.com/dladams/duneproc.git
+Cloning into 'duneproc'...
+remote: Enumerating objects: 985, done.
+remote: Counting objects: 100% (557/557), done.
+remote: Compressing objects: 100% (376/376), done.
+remote: Total 985 (delta 389), reused 303 (delta 179), pack-reused 428
+Receiving objects: 100% (985/985), 180.69 KiB | 2.47 MiB/s, done.
+Resolving deltas: 100% (628/628), done.
+
+[dladams@jupyter-dladams pkgs]$ dune-run -e dunebuild -r v09_44_00_02 shell
+Setting up dunesw v09_44_00_02 e20:prof
+
+dunebuild-v09_44_00_02> duneproc/build
+
+
+Source: /home/dladams/proc/pkgs/duneproc
+Build: /home/dladams/tmp/build/v09_44_00_02/duneproc
+Install: /home/dladams/proc/install/v09_44_00_02/duneproc
+
+Running cmake in /home/dladams/proc/pkgs/duneproc...
+      CMAKE_CXX_COMPILER: /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/c++
+ CMAKE_CXX_COMPILE_FLAGS: 
+         CMAKE_CXX_FLAGS: -std=c++17
+Start building dictionaries
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/dladams/tmp/build/v09_44_00_02/duneproc
+
+Building...
+[  8%] Generating duneproc.cxx, duneprocDict.rootmap
+.
+.
+.
+-- Installing: /home/dladams/proc/install/v09_44_00_02/duneproc/doc/ibRunDates.txt
+
+dunebuild-v09_44_00_02> source $DUNE_INSTALL_DIR/duneproc/setup.sh
+Setting up duneproc
+
+dunebuild-v09_44_00_02> duneprocHelp
+/home/dladams/proc/install/v09_44_00_02/duneproc/bin/duneprocHelp OPT
+  OPT = general for general commands
+  OPT = pdsp for protoDUNE commands
+  OPT = ib for Iceberg commands
+  OPT = ibex fpr Iceberg examples
+  OPT = ibex fpr Iceberg examples
+</pre>
+The build here is done in a *dunerun* shell instead of the *dunerun* command line. TYhis allows us to immediately setup *duneproc* and issue the help command to check the installation.
+
 ## Running from python
 The python class *DuneRun* in module *dunerun* provides similar fuctionality from the python command line. For examples of use, see the [dunerun notebook](ipynb/dunerun.ipynb).
 
 ## Development plans
-None planned. Suggestions welcome.
+
+* Add command dune-install-dir that returns DUNE_INSTALL_VERSION with %VERSION% replaced with DUNESW_VERSION. Better dune-find-product?
+* Add setup of environment plus a list of ups packages. Update *dunebuild* to use this.
+* Add setup of environment plus a list of analysis packages from DUNE_INSTALL_DIR.
+* Other suggestions welcome.

@@ -18,6 +18,8 @@ while [[ $# -gt 0 ]]; do
     echo "        Provided here:"
     echo "          dune - Sets up dune w/o any packages."
     echo "          dunesw - Sets up dune w/ dunesw with argument REL"
+    echo "          dunebuild - Sets up dunesw with argument REL plus packages"
+    echo "                      needed to build other DUNE packages (cmake, studio)"
     echo "        If undefined or '.', the command is run without setup."
     echo "        Default is env variable DUNESW_SUPPORT_ENV or dunesw."
     echo "  REL - Release tag passed to the environment setup script."

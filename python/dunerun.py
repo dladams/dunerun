@@ -6,7 +6,7 @@ import time
 
 def version():
     """Return package version string"""
-    scom = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bin', 'dunesw-supportVersion')
+    scom = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bin', 'dunerunVersion')
     return subprocess.run(['bash', '-c', scom], capture_output=True).stdout.decode().strip()
 
 sigrecs = []

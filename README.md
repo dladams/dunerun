@@ -22,23 +22,28 @@ source MY-INSTALL-PATH/setup.sh
 After the above setup, the command *dune-run* is available. To see the current options use the -h option:
 <pre>
 > dune-run -h
-Usage: /home/dladams/proc/install/common/dunesw-support/bin/dune-run [-e ENV] [-r REL] [-d LEVEL] COM
+Usage: /home/dladams/proc/install/common/dunerun/bin/dune-run [-e ENV] [-r REL] [-d LEVEL] COM
 Runs command COM in the environment defined by "source setup-ENV.sh REL"
   ENV - Environment name.
-        Default is env variable DUNESW_SUPPORT_ENV.
         Provided here:
           dune - Sets up dune w/o any packages.
-          dunesw - Sets up dune w/ dunesw with REL=VERS:QUAL
-        If udefined or '.', the command is run without setup.
-  REL - Release tag (e.g. v09_42_03_00 or v09_42_03_00:c7:prof)
-        Default is env variable DUNESW_SUPPORT_RELEASE.
+          dunesw - Sets up dune w/ dunesw with argument REL
+        If undefined or '.', the command is run without setup.
+        Default is env variable DUNESW_SUPPORT_ENV or dunesw.
+  REL - Release tag passed to the environment setup script.
+        For dunesw, this can be
+          -- VERS or VERS:QUAL where VERS is the version and QUAL is the
+             qualifier (e.g. v09_42_03_00 or v09_42_03_00:c7:prof),
+          -- the path to file that sets up a local build or installation
+             of dunesw, or
+          -- the path to a directory holding a local build made with
+             dune-dev (See https://github.com/dladams/dune-dev)
+        Default is env variable DUNESW_SUPPORT_RELEASE or a recent release.
   LEVEL - 0 - Command is executed with no output from this script or
               from the setup (default)
           1 - Command is executed with informational messages.
           2 - Command and infomational messages are displayed w/o execution.
-If both setup and release are provided then the release is
-passed as an argument to the setup.
-If only the setup is provided then the release is set up from CVMFS
+Command 'shell' starts an interactive bash shell in the environment.
 </pre>
 The environment *dune* locates the DUNE/larsoft software without setting up any packages. This is useful for issuing the usual ups command to see what packages are available, e.g.
 <pre>

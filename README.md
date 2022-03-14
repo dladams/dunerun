@@ -9,7 +9,7 @@ To install this package at MY-INSTALL-PATH:
 <pre>
 cd any-directory
 git clone https://github.com/dladams/dunerun.git
-./dunesw-support/build -i MY-INSTALL-PATH
+./dunerun/build -i MY-INSTALL-PATH
 </pre>
 The option can be omitted if you have defined env variable DUNE_INSTALL_DIR.
 

@@ -20,29 +20,43 @@ COM=$@
 COMARR=($COM)
 
 # First check if the command is valid
-if ! type $COM 2>/dev/null 1>/dev/null; then
-  echo Invalid command: $COM
+if ! type $COMARR 2>/dev/null 1>/dev/null; then
+  echo Invalid command: $COM >&2
   exit 1
 fi
 
 # Check if the file holding the command exists.
-if [ ${COMARR[0]} != ls ]; then
+if [ $COMARR != ls ]; then
   if COMFIL=$(type -P $COM 2>/dev/null); then
     #echo Checking command file $COMFIL
     if ! $0 $TIM ls $COMFIL 1>/dev/null 2>/dev/null; then
-      echo Invalid command file: $COMFIL
+      echo Invalid command file: $COMFIL >&2
       exit 2
     fi
   fi
 fi
 
 # Run the command.
-if [ $TIM -eq 0 ]; then
+if [ $TIM = 0 ]; then
   $COM
   exit $?
 else
   if ! (timeout $TIM $COM); then
-     echo Command timed out after $TIM
+     LCH=${TIM:0-1}
+     UNIT=seconds
+     if [ $LCH = s ]; then
+       TIM=${TIM:0:-1}
+     elif [ $LCH = m ]; then
+       UNIT=minutes
+       TIM=${TIM:0:-1}
+     elif [ $LCH = h ]; then
+       UNIT=hours
+       TIM=${TIM:0:-1}
+     fi
+     if [ $TIM = 1 ]; then
+       UNIT=${UNIT:0:-1}
+     fi
+     echo Command timed out after $TIM $UNIT >&2
   fi
   exit $?
 fi

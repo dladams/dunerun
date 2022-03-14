@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# dune-timeout
+#
+# David Adams
+# March 2008
+#
+# Run command COM with timeout $TIM.
+
+if [ $# -lt 2 -o "$1" = "-h" ]; then
+  echo Usage $0 TIM COM
+  echo "  Run command COM (with arguments) with timeout TIM"
+  echo "  Timeout can be in sec, min or hours, e.g. 10, 3m, 2h"
+  exit 0
+fi
+
+TIM=$1
+shift
+COM=$@
+COMARR=($COM)
+
+# First check if the command is valid
+if ! type $COM 2>/dev/null 1>/dev/null; then
+  echo Invalid command: $COM
+  exit 1
+fi
+
+# Check if the file holding the command exists.
+if [ ${COMARR[0]} != ls ]; then
+  if COMFIL=$(type -P $COM 2>/dev/null); then
+    #echo Checking command file $COMFIL
+    if ! $0 $TIM ls $COMFIL 1>/dev/null 2>/dev/null; then
+      echo Invalid command file: $COMFIL
+      exit 2
+    fi
+  fi
+fi
+
+# Run the command.
+if [ $TIM -eq 0 ]; then
+  $COM
+  exit $?
+else
+  if ! (timeout $TIM $COM); then
+     echo Command timed out after $TIM
+  fi
+  exit $?
+fi

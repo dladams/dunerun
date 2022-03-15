@@ -20,7 +20,20 @@ source MY-INSTALL-PATH/setup.sh
 </pre>
 
 ## Running from the linux command line
-After the above setup, the command *dune-run* is available. To see the current options use the -h option:
+After the above setup, the dunerun commands are available. For information about dunerun:
+<pre>
+[dladams@jupyter-dladams console]$ dunerunHelp
+This is dunerun version 1.0.6
+
+It provides the following commands:
+  dune-run: Run a command in dune environments.
+  dune-timeout: Run command with a timeout.
+Use option -h for help with any of these.
+
+The following classes are provided in python modkle dunerun:
+  DuneRun: Run a command in dune environments.
+</pre>
+To learn more about the command *dune-run*, use the -h option:
 <pre>
 > dune-run -h
 Usage: /home/dladams/proc/install/common/dunerun/bin/dune-run [-e ENV] [-r REL] [-d LEVEL] COM

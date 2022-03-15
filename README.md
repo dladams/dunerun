@@ -23,14 +23,16 @@ source MY-INSTALL-PATH/setup.sh
 After the above setup, the dunerun commands are available. For information about dunerun:
 <pre>
 [dladams@jupyter-dladams console]$ dunerunHelp
-This is dunerun version 1.0.6
+This is dunerun version 1.0.7
 
 It provides the following commands:
+  dunerunHelp - This message.
+  dunerunVersion - Show the installed version of dunerun.
   dune-run: Run a command in dune environments.
   dune-timeout: Run command with a timeout.
 Use option -h for help with any of these.
 
-The following classes are provided in python modkle dunerun:
+The following classes are provided in python module dunerun:
   DuneRun: Run a command in dune environments.
 </pre>
 To learn more about the command *dune-run*, use the -h option:

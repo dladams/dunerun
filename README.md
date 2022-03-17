@@ -256,7 +256,9 @@ dunebuild-v09_44_00_02> duneprocHelp
 The build here is done in a *dunerun* shell instead of the *dunerun* command line. TYhis allows us to immediately setup *duneproc* and issue the help command to check the installation.
 
 ## Running from python
-The python class *DuneRun* in module *dunerun* provides similar fuctionality from the python command line. For examples of use, see the [dunerun notebook](ipynb/dunerun.ipynb).
+The python class *DuneRun* in module *dunerun* provides similar fuctionality from the python command line. For examples of use, see the notebooks:
+* [dunerun](ipynb/dunerun.ipynb) - Introduction to using *DuneRun*
+* [dunedata](ipynb/dunedata.ipynb) - Demonstrates how to find and access DUNE event data
 
 ## Development plans
 

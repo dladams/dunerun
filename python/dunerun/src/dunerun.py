@@ -4,13 +4,28 @@ import subprocess
 import signal
 import time
 
+def findup(startpath, fnam):
+    """Search up the path of a file for another file"""
+    insdir = startpath
+    while len(insdir) > 1:
+        insdir = os.path.dirname(insdir)
+        path = os.path.join(insdir, fnam)
+        if os.path.exists(path): return path
+    return None
+    
 def version():
     """Return package version string"""
-    scom = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bin', 'dunerunVersion')
-    return subprocess.run(['bash', '-c', scom], capture_output=True).stdout.decode().strip()
+    scom = findup(__file__, os.path.join('bin', 'dunerunVersion'))
+    errsuf = f"-from-{__file__}"
+    if scom is not None:
+        cpr = subprocess.run(scom, capture_output=True)
+        if cpr.returncode == 0: return cpr.stdout.decode().strip()
+        errsuf = f"-at-{scom}"
+    return f"Unable-to-find-version{errsuf}"
 
 sigrecs = []
 def handler(signum, frame):
+    """ Signal handler that appends the signal to the global list sigrecs. """
     #print('Signal handler called with signal', signum)
     sigrecs.append(signum)
 
@@ -38,8 +53,7 @@ class DuneRun:
         self.scoms = []
         myname = 'DuneRun'
         if len(senv):
-            scom = ''
-            sfil = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bin', 'setup-'+senv+".sh")
+            sfil = findup(__file__, os.path.join('bin', 'setup-'+senv+".sh"))
             if os.path.exists(sfil):
                 if self.dbg>0: print(f"{myname}: Using setup file {sfil}")
                 scom = sfil
@@ -50,13 +64,14 @@ class DuneRun:
                 print(f"{myname}: ERROR: Unable to find setup file {sfil}")
         if self._shell:
              signal.signal(signal.SIGUSR1, handler)
-             #signal.signal(signal.SIGPIPE, handler)
-    def run(self, com):
+
+    def run(self, com, a_lev=None):
         myname ='DuneRun::run'
+        lev = self.lev if a_lev is None else a_lev
         if self._shell:
             if self._popen is None:
-                stderr = None if self.lev > 0 else subprocess.DEVNULL
-                stdout = None if self.lev > 1 else subprocess.DEVNULL
+                stderr = None if lev > 0 else subprocess.DEVNULL
+                stdout = None if lev > 1 else subprocess.DEVNULL
                 self._popen = subprocess.Popen(['/bin/bash'], stdin=subprocess.PIPE, stdout=stdout, stderr=stderr, text=True)
                 for scom in self.scoms:
                     self.run(f"source {scom}")
@@ -82,9 +97,10 @@ class DuneRun:
             line += com
             if self.dbg: print(f"{myname}: Running command {line}")
             #os.system(line)         # This uses sh instead of bash and can't parse setup-dunesw.sh
-            stderr = None if self.lev > 0 else subprocess.DEVNULL
-            stdout = None if self.lev > 1 else subprocess.DEVNULL
+            stderr = None if lev > 0 else subprocess.DEVNULL
+            stdout = None if lev > 1 else subprocess.DEVNULL
             subprocess.run(['bash', '-c', line], stdout=stdout, stderr=stderr)
+
     def __del__(self):
         myname = 'DuneRun::dtor'
         if self._popen is not None and self._popen.poll() is None:

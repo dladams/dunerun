@@ -129,12 +129,14 @@ if [ -n "$DOINSTALL" ]; then
     exit 1
   fi
   echo Installing $PROJECT...
-  if [ ! -d $INSDIR/bin ]; then
-    echo Creating $INSDIR/bin
-    mkdir $INSDIR/bin
-    mkdir $INSDIR/python
-    mkdir $INSDIR/ipynb
-  fi
+  PYDIRS="python python/dunerun python/dunerun/src"
+  for SUBDIR in bin $PYDIRS ipynb; do
+    DIR=$INSDIR/$SUBDIR
+    if [ ! -d $DIR ]; then
+      echo Creating $DIR
+      mkdir $DIR
+    fi
+  done
   rm -f $CATFILE
   touch $CATFILE
   for FILE in $(ls $SRCDIR/bin); do
@@ -151,20 +153,22 @@ if [ -n "$DOINSTALL" ]; then
       echo $OUTFILE >>$CATFILE
     fi
   done
-  for FILE in $(ls $SRCDIR/python/*.py); do
-    FILE=$(basename $FILE)
-    INFILE=$SRCDIR/python/$FILE
-    OUTFILE=$INSDIR/python/$FILE
-    echo Installing $OUTFILE
-    if [ -r $OUTFILE ]; then
-      echo WARNING: Overwriting $OUTFILE
-    fi
-    if cp $INFILE $OUTFILE; then
-      if [ ${FILE:0:5} != setup ]; then
-        chmod +x $OUTFILE
+  for PYDIR in $PYDIRS; do
+    for FILE in $(ls $SRCDIR/$PYDIR/*.py); do
+      FILE=$(basename $FILE)
+      INFILE=$SRCDIR/$PYDIR/$FILE
+      OUTFILE=$INSDIR/$PYDIR/$FILE
+      echo Installing $OUTFILE
+      if [ -r $OUTFILE ]; then
+        echo WARNING: Overwriting $OUTFILE
       fi
-      echo $OUTFILE >>$CATFILE
-    fi
+      if cp $INFILE $OUTFILE; then
+        if [ ${FILE:0:5} != setup ]; then
+          chmod +x $OUTFILE
+        fi
+        echo $OUTFILE >>$CATFILE
+      fi
+    done
   done
   for FILE in $(ls $SRCDIR/ipynb/*.ipynb); do
     FILE=$(basename $FILE)

@@ -30,7 +30,7 @@ def handler(signum, frame):
     sigrecs.append(signum)
 
 class DuneRun:
-    def __init__(self, senv='', sopt='', shell=False, dbg=0, lev=2):
+    def __init__(self, senv='', sopt='', shell=False, dbg=0, lev=2, precoms=[]):
         """
         Ctor for class that runs dune commands.
         senv = '' - Run in bash (no dune set up).
@@ -50,7 +50,7 @@ class DuneRun:
         self._popen = None
         self.dbg = dbg
         self.lev = lev
-        self.scoms = []
+        self.scoms = precoms
         myname = 'DuneRun'
         if len(senv):
             sfil = findup(__file__, os.path.join('bin', 'setup-'+senv+".sh"))

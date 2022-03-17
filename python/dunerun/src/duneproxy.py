@@ -21,7 +21,7 @@ class DuneProxy:
         cpr = subprocess.run(['klist'], capture_output=True)
         return cpr.returncode == 0
 
-    def __init__(self, nopassword_kinit, tmin=60):
+    def __init__(self, nopassword_kinit=False, tmin=60):
         """
         Class to check manage the user's VOMS proxy.
         Arguments:
@@ -38,15 +38,23 @@ class DuneProxy:
         """Return if a valid proxy with t > tmin is present."""
         return self.time() > self.tmin
 
-    def get_proxy(self, force=True, lev=0):
+    def get_proxy(self, lev=0):
         """
-        Attempt to obtain a VOMS proxy.
-        If force is not True, no action is taken if a valid proxy (t > tmin)
-        already exists.
+        Attempt to obtain a VOMS proxy. Returns if that proxy is valid.
         """
         # We use DuneRun so we can kx509 from cvmfs.
         # it is not installed at EAF.
         dune = dunerun.DuneRun('dune', shell=True, lev=lev)
+        if not self.have_kerberos_credentials():
+            if not self.nopassword_kinit:
+                raise Exception(f"{myname}: Kerberos credentials not found. Please run kinit.")
+            dune.run('kinit')
         dune.run('setup kx509')
         dune.run('kx509 --minhours 12')
         dune.run('voms-proxy-init -noregen -rfc -voms dune:/dune/Role=Analysis')
+        return self.is_valid()
+
+    def check_proxy(self, lev=0):
+        """Tries to get a proxy if we don't already have it."""
+        if self.is_valid(): return True
+        return self.get_proxy(lev)

@@ -37,6 +37,8 @@ class DuneRun:
                'dune' - Set up dune env but no products.
                'dunesw' - Set up dunesw.
         sopt = string passed to setup, e.g. 'e20:prof' for dunesw.
+        precoms = Commands run before environment setup.
+        shell = If true, all calls to run use the same shell.
         lev = Output level for the executed commands:
               0 - All output is discarded
               1 - stderr only
@@ -50,10 +52,21 @@ class DuneRun:
         self._popen = None
         self.dbg = dbg
         self.lev = lev
-        self.scoms = precoms
+        self.pcoms = precoms
+        self.scoms = []
         myname = 'DuneRun'
+        # This package may have been set up in python and not the supporting shell
+        # so we add a setup of this package.
+        if True:
+            sfil = findup(__file__, 'setup.sh')
+            if os.path.exists(sfil):
+                if self.dbg>0: print(f"{myname}: Using package setup file {sfil}")
+                self.scoms.append(sfil)
+            else:
+                print(f"{myname}: ERROR: Unable to find setup file {sfil}")
+        # Add the environment setup file.
         if len(senv):
-            sfil = findup(__file__, os.path.join('bin', 'setup-'+senv+".sh"))
+            sfil = findup(__file__, os.path.join('bin', 'setup-'+senv+'.sh'))
             if os.path.exists(sfil):
                 if self.dbg>0: print(f"{myname}: Using setup file {sfil}")
                 scom = sfil
@@ -73,6 +86,8 @@ class DuneRun:
                 stderr = None if lev > 0 else subprocess.DEVNULL
                 stdout = None if lev > 1 else subprocess.DEVNULL
                 self._popen = subprocess.Popen(['/bin/bash'], stdin=subprocess.PIPE, stdout=stdout, stderr=stderr, text=True)
+                for pcom in self.pcoms:
+                    self.run(pcom)
                 for scom in self.scoms:
                     self.run(f"source {scom}")
             sigcom = f"kill -{signal.SIGUSR1} {os.getpid()}"

@@ -201,7 +201,7 @@ dunerun>
 </pre>
 
 ## Building analysis packages
-Like this package, most of my analysis packages provide a script *build* that can be used to build and install that package. In most cases, the build is on top of DUNE software and requires setup of some development packages including *cmake*. The environment *dunebuild* sets up *dunesw* and those develpment packages. Here is an example session installing [duneproc](https://github.com/dladams/duneproc).
+Like this package, most of my analysis packages provide a script *build* that can be used to build and install that package. In most cases, the build is on top of DUNE software and requires setup of some development packages including *cmake*. The environment *dunebuild* sets up *dunesw* and those development packages. Here is an example session installing [duneproc](https://github.com/dladams/duneproc).
 <pre>
 [dladams@jupyter-dladams ~]$ source $HOME/proc/install/common/dunerun/setup.sh
 
@@ -254,6 +254,13 @@ dunebuild-v09_44_00_02> duneprocHelp
   OPT = ibex fpr Iceberg examples
 </pre>
 The build here is done in a *dunerun* shell instead of the *dunerun* command line. TYhis allows us to immediately setup *duneproc* and issue the help command to check the installation.
+
+## Setting up to run without *dune-run*
+The setup files provided by *dunerun* may be used directly to set up the *dunesw* or *dunesw* build envirnonment for a particular release. E.g. after installing *dunerun*:
+<pre>
+setup $DUNERUN_DIR/bin/setup-dunesw.sh v09_45_00_00
+</pre>
+sets up *dunesw* with the indicated version. Replace "dunesw" with "dunebuild" to set up the build environment and replace "v09_45_00_00" with any *dunerun* release specifier (REL in the *dune-run* help message).
 
 ## Running from python
 The python class *DuneRun* in module *dunerun* provides similar fuctionality from the python command line. For examples of use, see the notebooks:

@@ -1,7 +1,7 @@
 # dunerun
 David Adams  
 March 2022  
-Version 1.0.7  
+Version 1.2.0  
   
 Support for using DUNE software from the linux command line and python.
 

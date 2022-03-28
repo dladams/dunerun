@@ -16,7 +16,7 @@ or python.
 After installation, the source and build areas can be removed or altered without affecting
 this run time behavior.
 
-The build is controlled by the following env variables as described below:
+The build is controlled by the DUNE build env variables in this table:
 
 | Flag |   Variable |              [Default] |
 |-----|---|---|
@@ -24,7 +24,7 @@ The build is controlled by the following env variables as described below:
 |  -b | DUNE_BUILD_DIR     |  [$DUNE_INSTALL_DIR/../build]
 |  -p | DUNE_INSTALL_BYPKG |  [true]
 |  -v | DUNE_VERSION       |  [<undefined>]
-|  -q | DUNE_QUALIFIER      |  [<undefined>]
+|  -q | DUNE_QUALIFIER     |  [<undefined>]
 
 ## Installation
 
@@ -52,9 +52,10 @@ paths indicated above.
 For any other value of DUNE_INSTALL_BYPKG, the build script may install by-package
 or exit with error.
   
-For installation by-package only, the setup script should prepend the appropriate
-directories the sysetem paths. In both cases the setup should define the variable
-<PKGNAME>_VERSION indicating the package version.
+For installation by-package only, the setup script must prepend the appropriate
+directories to the corresponding system paths.
+In both cases the setup should define the variable <PKGNAME>_VERSION indicating
+the package version.
   
 ## DUNE software
 The variables DUNE_VERSION and DUNE_QUAL repectively indicate the DUNE software
@@ -63,8 +64,20 @@ version and ups qualifier with which the release area is intended to be used.
 ## Build options
 The build command line can include a list of options including the following
 * help - show the supported options and their meanings (required)
+* show - show what will be installed without doing installation
 * install - build and install the package (required)
 * build - build without installing
 * remove - remove the installed files (required)
 * test - run tests on the installation
 The list indicates which option are required for a package to be dunerun-conformant.
+If no option is provided, then "install" is used (required)
+
+## dunerun
+The package [dunerun](https://github.com/dladams/dunerun) is dunerun-conformant.
+It defines the same DUNE build env in its setup file and can be used ensure that
+subsequent packages are built consistently, e.g. to build dunerun-comformant
+package \<mypkg>:
+<pre>
+> source &lt;install-dir>/dunerun/setup.sh
+> &lt;source-dir>/&lt;mypkg>/build install
+</pre>

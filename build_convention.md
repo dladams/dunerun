@@ -86,3 +86,6 @@ Or, for packages that are built on top of a *dunesw* release:
 > source &lt;install-dir>/dunerun/setup.sh
 > dune-run -e dunebuild &lt;source-dir>/&lt;mypkg>/build
 </pre>
+The *dunerun* build command provides flagged options to supply or override any of
+the DUNE build env variables. Those flags and the defaults used if any remain
+undefined are listed in the table above.

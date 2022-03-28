@@ -79,5 +79,10 @@ subsequent packages are built consistently, e.g. to build dunerun-comformant
 package \<mypkg>:
 <pre>
 > source &lt;install-dir>/dunerun/setup.sh
-> &lt;source-dir>/&lt;mypkg>/build install
+> &lt;source-dir>/&lt;mypkg>/build
+</pre>
+Or, for packages that are built on top of a *dunesw* release:
+<pre>
+> source &lt;install-dir>/dunerun/setup.sh
+> dune-run -e dunebuild &lt;source-dir>/&lt;mypkg>/build
 </pre>

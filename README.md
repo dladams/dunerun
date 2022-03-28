@@ -11,24 +11,21 @@ To install this package at \<install-path>:
 <pre>
 cd &lt;any-directory>
 git clone https://github.com/dladams/dunerun.git
-./dunerun/build -i &lt;install-path> -b &lt;install-path>
+./dunerun/build -i &lt;install-path> -b &lt;build-path> -v &lt;dune-version>
 </pre>
-where the options specify the base directories for installing and building
-this an subsequent packages. The options can be specified instead with env
-variables DUNE_INSTALL_DIR and DUNE_BUILD_DIR. By default, the installation
-is done at DUNE_INSTALL_DIR/PKGNAME with PKGNAME denoting the name of the
-package being installed, here dunerun. To install all packages directly in
-DUNE_INSTALL_DIR, use option "-p false" or set DUNE_INSTALL_BYPKG to false.
+The command-line options may be omitted if the corresponding DUNE build env variables
+are set. And other values may be supplied.
+For details, see the [dunerun build convention](./build_convention.md).
+The build directory is not used in and the DUNE version does not affect the
+installation here except that generated setup file echoes those definitions for
+use in building subsequent packages.
 
 To set up to use the package in this or any future session:
 <pre>
 source MY-INSTALL-PATH/setup.sh
 </pre>
 In addition to adding this package's bash and python utilities to the the
-caller's paths, the setup defines the above DUNE_* env variables to be
-used to build other packages. Packages which provide a script named ./build
-that uses these variables to intall and build at the locations described
-above is said to be *dunerun-conforming".
+caller's paths, the setup defines the DUNE build env variables.
 
 ## Running from the linux command line
 After the above setup, the dunerun commands are available. For information about dunerun:

@@ -7,11 +7,11 @@ Version 1.2.0
 Support for using DUNE software from the linux command line and python.
 
 ## Installation and set up
-To install this package at MY-INSTALL-PATH:
+To install this package at \<install-path>:
 <pre>
 cd any-directory
 git clone https://github.com/dladams/dunerun.git
-./dunerun/build -i MY-INSTALL-PATH -b MY-BUILD-PATH
+./dunerun/build -i &lt;install-path> -b &lt;install-path>
 </pre>
 where the options specify the base directories for installing and building
 this an subsequent packages. The options can be specified instead with env

@@ -1,4 +1,5 @@
 # dunerun
+
 David Adams  
 March 2022  
 Version 1.2.0  
@@ -10,14 +11,24 @@ To install this package at MY-INSTALL-PATH:
 <pre>
 cd any-directory
 git clone https://github.com/dladams/dunerun.git
-./dunerun/build -i MY-INSTALL-PATH
+./dunerun/build -i MY-INSTALL-PATH -b MY-BUILD-PATH
 </pre>
-The option can be omitted if you have defined env variable DUNE_INSTALL_DIR.
+where the options specify the base directories for installing and building
+this an subsequent packages. The options can be specified instead with env
+variables DUNE_INSTALL_DIR and DUNE_BUILD_DIR. By default, the installation
+is done at DUNE_INSTALL_DIR/PKGNAME with PKGNAME denoting the name of the
+package being installed, here dunerun. To install all packages directly in
+DUNE_INSTALL_DIR, use option "-p false" or set DUNE_INSTALL_BYPKG to false.
 
 To set up to use the package in this or any future session:
 <pre>
 source MY-INSTALL-PATH/setup.sh
 </pre>
+In addition to adding this package's bash and python utilities to the the
+caller's paths, the setup defines the above DUNE_* env variables to be
+used to build other packages. Packages which provide a script named ./build
+that uses these variables to intall and build at the locations described
+above is said to be *dunerun-conforming".
 
 ## Running from the linux command line
 After the above setup, the dunerun commands are available. For information about dunerun:

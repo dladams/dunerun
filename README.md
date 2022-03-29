@@ -33,8 +33,11 @@ the setup file.
 
 To set up to use the package in this or any future session:
 <pre>
-source MY-INSTALL-PATH/setup.sh
+source &lt;install-path>/dunerun/setup.sh
 </pre>
+This assumes package-specific installation.
+see the [dunerun build convention](./build_convention.md) to locate the setup file
+for shared-directory installation.
 In addition to adding this package's bash and python utilities to the the
 caller's paths, the setup defines the DUNE build env variables as discussed above.
 

@@ -69,7 +69,9 @@ The build command line can include a list of options including the following
 * build - build without installing
 * remove - remove the installed files (required)
 * test - run tests on the installation
-The list indicates which option are required for a package to be dunerun-conformant.
+  
+The options which a conformant packages is required to support are marked required
+in the above list.
 If no option is provided, then "install" is used (required)
 
 ## dunerun

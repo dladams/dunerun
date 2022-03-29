@@ -291,8 +291,5 @@ The python class *DuneRun* in module *dunerun* provides similar fuctionality fro
 
 ## Development plans
 
-* Add options for timeout to deal with flaky filesystems like cvmfs.
-* Add command dune-install-dir that returns DUNE_INSTALL_VERSION with %VERSION% replaced with DUNESW_VERSION. Better dune-find-product?
-* Add setup of environment plus a list of ups packages. Update *dunebuild* to use this.
-* Add setup of environment plus a list of analysis packages from DUNE_INSTALL_DIR.
+* Default for due setup should be DUNE_VERSION and DUNE_QUAL.
 * Other suggestions welcome.

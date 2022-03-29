@@ -2,7 +2,7 @@
 
 David Adams  
 March 2022  
-Version 1.0.0
+Version 1.0.1
 
 This page specifies the *dunerun build convention* for package building and installation.
 Packages satisfying these requirements are said to be *dunerun-conformant*
@@ -54,12 +54,17 @@ or exit with error.
   
 For installation by-package only, the setup script must prepend the appropriate
 directories to the corresponding system paths.
-In both cases the setup should define the variable <pkgname>_VERSION indicating
-the package version.
   
 ## DUNE software
 The variables DUNE_VERSION and DUNE_QUAL repectively indicate the DUNE software
 version and ups qualifier with which the release area is intended to be used.
+  
+## Package commands
+In addition to the setup file, a conformat package is expected to provide the
+following bash commands after setup (\<pkgname> is the package name):
+
+* <pkgname>Version - Returns the the version string, typically i.j.k
+* <pkgname>Help - Help message explaing how to use the package
   
 ## Build options
 The build command line can include a list of options including the following
@@ -75,8 +80,8 @@ in the above list.
 If no option is provided, then "install" is used (required)
 
 ## dunerun
-The package [dunerun](https://github.com/dladams/dunerun) is dunerun-conformant.
-It defines the same DUNE build env in its setup file and can be used ensure that
+The package [dunerun](https://github.com/dladams/dunerun) is itself dunerun-conformant.
+In addition, it exports the same DUNE build env in its setup file and can be used ensure that
 subsequent packages are built consistently, e.g. to build dunerun-comformant
 package \<mypkg>:
 <pre>

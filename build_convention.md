@@ -30,10 +30,10 @@ The build is controlled by the DUNE build env variables in this table:
 
 If DUNE_INSTALL_BYPKG has the value "true" or is undefined, then the installation is
 *by-package* meaning it is done at 
-at DUNE_INSTALL_DIR/\<PKGNAME> where \<PKGNAME> denotes the package name.
+at DUNE_INSTALL_DIR/\<pkgname> where \<pkgname> denotes the package name.
 All files should be written in or below that directory and no other package should
 write in that directory. The setup script for the package is
-DUNE_INSTALL_DIR/\<PKGNAME>/setup.sh.
+DUNE_INSTALL_DIR/\<pkgname/setup.sh.
 
 If DUNE_INSTALL_BYPKG has the value "false", the installation is directly in
 subdirectories of DUNE_INSTALL_DIR including
@@ -44,7 +44,7 @@ subdirectories of DUNE_INSTALL_DIR including
 * root
 * setup - holds package setup scripts
 * catalogs - file catalog for each installed package
-with setup script written to setup/setup-PKGNAME.sh. That script will be run after
+with setup script written to setup/setup-pkgname.sh. That script will be run after
 the installation area is set up in a manner to be specified in future versions of
 this document. At minimum, the bin, lib and python directories are included in the
 paths indicated above.
@@ -54,7 +54,7 @@ or exit with error.
   
 For installation by-package only, the setup script must prepend the appropriate
 directories to the corresponding system paths.
-In both cases the setup should define the variable <PKGNAME>_VERSION indicating
+In both cases the setup should define the variable <pkgname>_VERSION indicating
 the package version.
   
 ## DUNE software

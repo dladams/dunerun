@@ -30,7 +30,7 @@ while [[ $# -gt 0 ]]; do
     echo "             of dunesw, or"
     echo "          -- the path to a directory holding a local build made with"
     echo "             dune-dev (See https://github.com/dladams/dune-dev)"
-    echo "        Default is env variable DUNESW_SUPPORT_RELEASE or a recent release."
+    echo "        Default is $DUNE_VERSION:$DUNE_QUALIFIER"
     echo "  LEVEL - 0 - Command is executed with no output from this script or"
     echo "              from the setup (default)"
     echo "          1 - Command is executed with informational messages."

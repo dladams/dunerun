@@ -6,8 +6,8 @@
 #
 # A script to run  a command in a dunesw enviroment.
 
-ENV=${DUNESW_SUPPORT_ENV:-dunesw}
-REL=${DUNESW_SUPPORT_RELEASE:-v09_44_00_02}
+ENV=dunesw
+REL=$(dunerunRelease)
 LEVEL=0
 while [[ $# -gt 0 ]]; do
   ARG=$1
@@ -21,7 +21,7 @@ while [[ $# -gt 0 ]]; do
     echo "          dunebuild - Sets up dunesw with argument REL plus packages"
     echo "                      needed to build other DUNE packages (cmake, studio)"
     echo "        If undefined or '.', the command is run without setup."
-    echo "        Default is env variable DUNESW_SUPPORT_ENV or dunesw."
+    echo "        Default is dunesw."
     echo "  REL - Release tag passed to the environment setup script."
     echo "        For dunesw, this can be"
     echo "          -- VERS or VERS:QUAL where VERS is the version and QUAL is the"
@@ -80,15 +80,39 @@ if [ "$COM" = shell ]; then
 else
 
   if [ -n "$ENV" -a "$ENV" != "." ]; then
-    SETUP_FILE=setup-$ENV.sh
-    if [ $LEVEL -gt 0 ]; then echo $MYNAME Setting up.; fi
-    if [ $LEVEL -eq 2 ]; then
-       echo $MYNAME '>' source $SETUP_FILE $REL 2>&1 1>/dev/null
-    elif [ $LEVEL -eq 0 ]; then
-       source $SETUP_FILE $REL 2>&1 1>/dev/null
-    else
-      source $SETUP_FILE $REL
-    fi
+    for MYENV in $(echo $ENV | sed s'/,/ /g'); do
+      NOTFS=()
+      if [ "$DUNE_INSTALL_BYPKG" = false ]; then
+        DUNEINSSUP=$DUNE_INSTALL_DIR/setup/setup-$MYENV.sh
+      else
+        DUNEINSSUP=$DUNE_INSTALL_DIR/$MYENV/setup.sh
+      fi
+      SUPARG=$REL     # Only for the first attempt
+      for SUPFILE in $DUNERUN_DIR/bin/setup-$MYENV.sh $DUNEINSSUP; do
+        if [ ! -r $SUPFILE ]; then
+          NOTFS=(${NOTFS[@]} $SUPFILE)
+        else
+          if [ $LEVEL -gt 0 ]; then echo $MYNAME Setting up $MYENV $SUPARG; fi
+          if [ $LEVEL -eq 2 ]; then
+            echo $MYNAME '>' source $SUPFILE $SUPARG 2>&1 1>/dev/null
+          elif [ $LEVEL -eq 0 ]; then
+            source $SUPFILE $SUPARG 2>&1 1>/dev/null
+          else
+            source $SUPFILE $SUPARG
+          fi
+          NOTFS=()
+          break
+        fi
+        SUPARG=
+      done
+      if [ ${#NOTFS} -gt 0 ]; then
+        echo $MYNAME: ERROR: Unable to find setup for $MYENV at any of:
+        for NOTF in ${NOTFS[@]}; do
+          echo "  $NOTF"
+        done
+        break
+      fi
+    done
   fi
 
   if [ $# -gt 0 ]; then

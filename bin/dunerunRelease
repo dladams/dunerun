@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# dunerunRelease
+#
+# David Adams
+# March 2022
+#
+# Returns the DUNE release version and qualifier.
+
+HELP=false
+VERS=false
+QUAL=false
+NONE=true
+while getopts ":hvq" OPT; do
+  if [ $OPT = h ]; then
+    HELP=true
+  elif [ $OPT = v ]; then
+    VERS=true
+  elif [ $OPT = q ]; then
+    QUAL=true
+  else
+    echo "dunerunRelease: ERROR: Invalid option: -$OPTARG"
+    exit 1
+  fi
+  NONE=false
+done
+
+if [ $NONE = true ]; then
+  VERS=true
+  QUAL=true
+fi
+
+if [ $HELP = true ]; then
+  echo "Usage: $0 [-h] [-v] [-q]"
+  echo "Displays the DUNE version and qualifier."
+  echo "  -h: This message."
+  echo "  -v: Show version."
+  echo "  -q: Show qualifier."
+fi
+
+if [ $VERS = "true" -a $QUAL = "true" ]; then
+  echo $DUNE_VERSION:$DUNE_QUALIFIER
+elif [ $VERS = true ]; then
+  echo $DUNE_VERSION
+elif [ $QUAL = true ]; then
+  echo $DUNE_QUALIFIER
+fi

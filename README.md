@@ -60,12 +60,14 @@ The following classes are provided in python module dunerun:
 To learn more about the command *dune-run*, use the -h option:
 <pre>
 > dune-run -h
-Usage: /home/dladams/proc/install/common/dunerun/bin/dune-run [-e ENV] [-r REL] [-d LEVEL] COM
+Usage: /home/dladams/proc/install/v09_46_00_00/dunerun/bin/dune-run [-e ENV] [-r REL] [-d LEVEL] COM
 Runs command COM in the environment defined by "source setup-ENV.sh REL"
   ENV - Environment name.
         Provided here:
           dune - Sets up dune w/o any packages.
           dunesw - Sets up dune w/ dunesw with argument REL
+          dunebuild - Sets up dunesw with argument REL plus packages
+                      needed to build other DUNE packages (cmake, studio)
         If undefined or '.', the command is run without setup.
         Default is env variable DUNESW_SUPPORT_ENV or dunesw.
   REL - Release tag passed to the environment setup script.
@@ -76,12 +78,13 @@ Runs command COM in the environment defined by "source setup-ENV.sh REL"
              of dunesw, or
           -- the path to a directory holding a local build made with
              dune-dev (See https://github.com/dladams/dune-dev)
-        Default is env variable DUNESW_SUPPORT_RELEASE or a recent release.
+        Default is v09_46_00_00:e20:prof
   LEVEL - 0 - Command is executed with no output from this script or
               from the setup (default)
           1 - Command is executed with informational messages.
           2 - Command and infomational messages are displayed w/o execution.
 Command 'shell' starts an interactive bash shell in the environment.
+[dladams@jupyter-dladams dunerun]$ 
 </pre>
 The environment *dune* locates the DUNE/larsoft software without setting up any packages. This is useful for issuing the usual ups command to see what packages are available, e.g.
 <pre>

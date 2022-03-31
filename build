@@ -278,6 +278,7 @@ for _OPT in ${_OPTS[@]}; do
       echo export DUNE_INSTALL_BYPACKAGE=$_BYPKG >>$_SUPFILE
       echo export DUNE_VERSION=$_VERS >>$_SUPFILE
       echo export DUNE_QUALIFIER=$_QUAL >>$_SUPFILE
+      echo "export PS1='dunerun> '" >>$_SUPFILE
     fi
     echo $_SUPFILE >>$_CATFILE
   else

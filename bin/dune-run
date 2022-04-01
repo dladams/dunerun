@@ -14,12 +14,14 @@ while [[ $# -gt 0 ]]; do
   if [ "$ARG" = "-h" ]; then
     echo "Usage: $0 [-e ENV] [-r REL] [-d LEVEL] COM"
     echo "Runs command COM in the environment defined by \"source setup-ENV.sh REL\""
-    echo "  ENV - Environment name."
-    echo "        Provided here:"
+    echo "  ENV - Environment name is any of"
     echo "          dune - Sets up dune w/o any packages."
-    echo "          dunesw - Sets up dune w/ dunesw with argument REL"
+    echo "          dunesw - Sets up dune w/ dunesw with argument REL."
     echo "          dunebuild - Sets up dunesw with argument REL plus packages"
-    echo "                      needed to build other DUNE packages (cmake, studio)"
+    echo "                      needed to build other DUNE packages (cmake, studio)."
+    echo "          pkgname - Name of any package installed alngside dunerun."
+    echo "          dunex,pkg1,pkg2... - Where dunex is any of dune, dunesw, dunebuild"
+    echo "                               or omitted and pkgi is any of pkgname."
     echo "        If undefined or '.', the command is run without setup."
     echo "        Default is dunesw."
     echo "  REL - Release tag passed to the environment setup script."
@@ -55,7 +57,7 @@ while [[ $# -gt 0 ]]; do
   fi
 done
 
-MYNAME="dune-run: "
+MYNAME="dune-run:"
 if [ $LEVEL -gt 0 ]; then
   echo "$MYNAME ENV: $ENV"
   echo "$MYNAME REL: $REL"
@@ -79,43 +81,75 @@ if [ "$COM" = shell ]; then
 
 else
 
+  # Flag indicating command should be run, i.e. set up succeeded.
+  RUNCOM=true
   if [ -n "$ENV" -a "$ENV" != "." ]; then
+    # Set SAMEREL if requested and installed releases are the same.
+    if [ "$REL" = "$(dunerunRelease)" ]; then
+      SAMEREL=true
+    else
+      SAMEREL=false
+    fi
+    # Loop over the comma-separeted list of products.
     for MYENV in $(echo $ENV | sed s'/,/ /g'); do
+      # Array of failed setup file locations.
       NOTFS=()
-      if [ "$DUNE_INSTALL_BYPKG" = false ]; then
-        DUNEINSSUP=$DUNE_INSTALL_DIR/setup/setup-$MYENV.sh
+      SUPARG=
+      # Check if there is a setup define here for the product.
+      # Allowed values include dune, dunesw and dunebuild.
+      SUPFILE=$DUNERUN_DIR/bin/setup-$MYENV.sh
+      if [ -r $SUPFILE ]; then
+        SUPARG=$REL
       else
-        DUNEINSSUP=$DUNE_INSTALL_DIR/$MYENV/setup.sh
-      fi
-      SUPARG=$REL     # Only for the first attempt
-      for SUPFILE in $DUNERUN_DIR/bin/setup-$MYENV.sh $DUNEINSSUP; do
-        if [ ! -r $SUPFILE ]; then
-          NOTFS=(${NOTFS[@]} $SUPFILE)
-        else
-          if [ $LEVEL -gt 0 ]; then echo $MYNAME Setting up $MYENV $SUPARG; fi
-          if [ $LEVEL -eq 2 ]; then
-            echo $MYNAME '>' source $SUPFILE $SUPARG 2>&1 1>/dev/null
-          elif [ $LEVEL -eq 0 ]; then
-            source $SUPFILE $SUPARG 2>&1 1>/dev/null
+        NOTFS=(${NOTFS[@]} $SUPFILE)
+        SUPFILE=
+        # Next check this a package installed in the current release
+        # iff no release is specified.
+        if [ $SAMEREL = true ]; then
+          if [ "$DUNE_INSTALL_BYPKG" = false ]; then
+            SUPFILE=$DUNE_INSTALL_DIR/setup/setup-$MYENV.sh
           else
-            source $SUPFILE $SUPARG
+            SUPFILE=$DUNE_INSTALL_DIR/$MYENV/setup.sh
           fi
-          NOTFS=()
-          break
+          if [ ! -r $SUPFILE ]; then
+            NOTFS=(${NOTFS[@]} $SUPFILE)
+              SUPFILE=
+            SUPFILE=
+          fi
         fi
-        SUPARG=
-      done
-      if [ ${#NOTFS} -gt 0 ]; then
-        echo $MYNAME: ERROR: Unable to find setup for $MYENV at any of:
+      fi
+      # Exit with error if package setup file was not found.
+      if [ -z "$SUPFILE" ]; then
+        echo -n "$MYNAME ERROR: Unable to find setup for $MYENV at"
+        if [ ${#NOTFS[@]} -eq 2 ]; then
+          echo -n " either of"
+        elif [ ${#NOTFS[@]} -gt 2 ]; then
+          echo -n " any of"
+        fi
+        echo ":"
         for NOTF in ${NOTFS[@]}; do
-          echo "  $NOTF"
+          echo "$MYNAME   $NOTF"
         done
+        if [ $SAMEREL = false ]; then
+          echo "$MYNAME Local packages are not set up because requested and installed"
+          echo "$MYNAME release tags do not match: $REL != $(dunerunRelease)"
+        fi
+        RUNCOM=false
         break
+      fi
+      # Set up the package.
+      if [ $LEVEL -gt 0 ]; then echo $MYNAME Setting up $MYENV $SUPARG; fi
+      if [ $LEVEL -eq 2 ]; then
+        echo $MYNAME '>' source $SUPFILE $SUPARG 2>&1 1>/dev/null
+      elif [ $LEVEL -eq 0 ]; then
+        source $SUPFILE $SUPARG 2>&1 1>/dev/null
+      else
+        source $SUPFILE $SUPARG
       fi
     done
   fi
 
-  if [ $# -gt 0 ]; then
+  if [ $RUNCOM = true -a $# -gt 0 ]; then
     if [ $LEVEL -gt 0 ]; then echo $MYNAME Executing.; fi
     if [ $LEVEL -eq 2 ]; then
       echo $MYNAME '>' $@

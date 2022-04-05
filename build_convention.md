@@ -5,7 +5,7 @@ March 2022
 Version 1.0.1
 
 This page specifies the *dunerun build convention* for package building and installation.
-Packages satisfying these requirements are said to be *dunerun-conformant*
+Packages satisfying these requirements are said to be *dunerun conformant*
 
 The source for a package consists of files in a directory tree typically stored in a git
 repository with the same name.
@@ -25,6 +25,10 @@ The build is controlled by the DUNE build env variables in this table:
 |  -p | DUNE_INSTALL_BYPKG |  [true]
 |  -v | DUNE_VERSION       |  [<undefined>]
 |  -q | DUNE_QUALIFIER     |  [<undefined>]
+  
+The flags may be used to specify the variables when installing *dunerun*.
+The set up for that package defines all the above the variables and provides a
+conventient way to ensure that laater installations in that area are done consistently.
 
 ## Installation
 
@@ -63,8 +67,8 @@ version and ups qualifier with which the release area is intended to be used.
 In addition to the setup file, a conformat package is expected to provide the
 following bash commands after setup (\<pkgname> is the package name):
 
-* <pkgname>Version - Returns the the version string, typically i.j.k
-* <pkgname>Help - Help message explaing how to use the package
+* &lt;pkgname>Version - Returns the the version string, typically with format i.j.k
+* &lt;pkgname>Help - Help message explaing how to use the package
   
 ## Build options
 The build command line can include a list of options including the following

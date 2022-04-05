@@ -3,9 +3,9 @@
 # dunerunVersion
 #
 # David Adams
-# March 2022
+# April 2022
 #
 # Returns the version string for the dunerun package.
 # This is where the version is maintained.
 
-echo 1.6.0
+echo 1.7.0

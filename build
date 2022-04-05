@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # David Adams
-# March 2022
+# April 2022
 #
 # Scripts for running and building DUNE SW.
 #
@@ -122,12 +122,6 @@ if [ -z "$_BLDBAS" ]; then
 fi
 
 # Assign install directory.
-if [ $_BYPKG = true ]; then
-  _INSDIR=$_INSBAS/$_PROJECT
-else
-  _INSDIR=$_INSBAS
-fi
-_INSDIR=$(readlink -f $_INSDIR)
 if [ ! -r $_INSBAS -o ! -d $_INSBAS ]; then
   echo Creating base installation directory: $_INSBAS
   mkdir -p $_INSBAS
@@ -143,8 +137,24 @@ if [ ! -r $_BLDBAS -o ! -d $_BLDBAS ]; then
     exit 1
   fi
 fi
+if [ $_BYPKG = true ]; then
+  _INSDIR=$_INSBAS/$_PROJECT
+else
+  _INSDIR=$_INSBAS
+fi
+_INSDIR=$(readlink -f $_INSDIR)
 
 _CATFILE=$_INSDIR/.$_PROJECT.cat
+
+# Check DUNE version and qualifier.
+if [ -z "$_VERS" ]; then
+  echo "ERROR: DUNE_VERSION must be defined or set with -v"
+  exit 1
+fi
+if [ -z "$_QUAL" ]; then
+  echo "ERROR: DUNE_QUALIFIER must be defined or set with -q"
+  exit 1
+fi
 
 # Process arguments.
 if [ ${#_OPTS[@]} -eq 0 ]; then _OPTS=(install); fi
@@ -188,15 +198,15 @@ for _OPT in ${_OPTS[@]}; do
     DOCLEANINSTALL=true
   elif [ $_OPT = show ]; then
     echo "Build configuration:"
-    echo "   Source directory: $_SRCDIR"
-    echo "  Install directory: $_INSDIR"
-    echo "       Catalog file: $_CATFILE"
+    echo "     Source directory: $_SRCDIR"
+    echo "    Install directory: $_INSDIR"
+    echo "         Catalog file: $_CATFILE"
     echo "Setup configuration:"
-    echo "       Install base: $_INSBAS"
-    echo "         Build base: $_BLDBAS"
-    echo "   Build by package: $_BYPKG"
-    echo "       DUNE version: $_VERS"
-    echo "     DUNE qualifier: $_QUAL"
+    echo "         Install base: $_INSBAS"
+    echo "           Build base: $_BLDBAS"
+    echo "     Build by package: $_BYPKG"
+    echo "         DUNE version: $_VERS"
+    echo "       DUNE qualifier: $_QUAL"
   elif [ $_OPT = install ]; then
     echo Installing $_PROJECT...
     if [ $_BYPKG = true ]; then
@@ -266,20 +276,19 @@ for _OPT in ${_OPTS[@]}; do
     done
     _SUPFILE=$(readlink -f $_INSDIR/setup.sh)
     if [ -r $_SUPFILE ]; then
-      echo Keeping existing setup: $_SUPFILE
-    else
-      echo Creating setup file: $_SUPFILE
-      touch $_SUPFILE
-      echo 'export DUNERUN_DIR='$_INSDIR >>$_SUPFILE
-      echo export PATH=$_INSDIR/bin:'$PATH' >>$_SUPFILE
-      echo export PYTHONPATH=$_INSDIR/python:'$PYTHONPATH' >>$_SUPFILE
-      echo export DUNE_INSTALL_DIR=$_INSBAS >>$_SUPFILE
-      echo export DUNE_BUILD_DIR=$_BLDBAS >>$_SUPFILE
-      echo export DUNE_INSTALL_BYPACKAGE=$_BYPKG >>$_SUPFILE
-      echo export DUNE_VERSION=$_VERS >>$_SUPFILE
-      echo export DUNE_QUALIFIER=$_QUAL >>$_SUPFILE
-      echo "export PS1='dunerun> '" >>$_SUPFILE
+      rm $_SUPFILE
     fi
+    echo Creating setup file: $_SUPFILE
+    touch $_SUPFILE
+    echo 'export DUNERUN_DIR='$_INSDIR >>$_SUPFILE
+    echo export PATH=$_INSDIR/bin:'$PATH' >>$_SUPFILE
+    echo export PYTHONPATH=$_INSDIR/python:'$PYTHONPATH' >>$_SUPFILE
+    echo export DUNE_INSTALL_DIR=$_INSBAS >>$_SUPFILE
+    echo export DUNE_BUILD_DIR=$_BLDBAS >>$_SUPFILE
+    echo export DUNE_INSTALL_BYPACKAGE=$_BYPKG >>$_SUPFILE
+    echo export DUNE_VERSION=$_VERS >>$_SUPFILE
+    echo export DUNE_QUALIFIER=$_QUAL >>$_SUPFILE
+    echo "export PS1='dunerun> '" >>$_SUPFILE
     echo $_SUPFILE >>$_CATFILE
   else
     echo "WARNING: Ignoring invalid option: $_OPT"

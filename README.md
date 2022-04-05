@@ -309,4 +309,5 @@ The python class *DuneRun* in module *dunerun* provides similar fuctionality fro
 
 ## Development plans
 
-* Suggestions welcome.
+* Add package sequence set up to *DuneRun*.
+* Other suggestions are welcome.

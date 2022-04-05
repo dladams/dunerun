@@ -278,7 +278,7 @@ dunebuild-v09_44_00_02> duneprocHelp
   OPT = ibex fpr Iceberg examples
   OPT = ibex fpr Iceberg examples
 </pre>
-The build here is done in a *dunerun* shell instead of the *dunerun* command line. TYhis allows us to immediately setup *duneproc* and issue the help command to check the installation.
+The build here is done in a *dunerun* shell instead of the *dunerun* command line. This allows us to immediately setup *duneproc* and issue the help command to check the installation.
 
 ## Setting up to run without *dune-run*
 The setup files provided by *dunerun* may be used directly to set up the *dunesw* or *dunesw* build envirnonment for a particular release. E.g. after installing *dunerun*:

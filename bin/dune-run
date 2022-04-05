@@ -64,7 +64,6 @@ if [ $LEVEL -gt 0 ]; then
   echo "$MYNAME COM: $@"
 fi
 
-
 if [ "$COM" = shell ]; then
   if [ $LEVEL -gt 0 ]; then
     echo "$MYNAME Starting shell..."
@@ -77,7 +76,7 @@ if [ "$COM" = shell ]; then
   if [ $LEVEL -gt 0 ]; then
     echo "$MYNAME Setting prompt $NEWPS1"
   fi
-  bash --rcfile <(echo 'source dune-run -e '$ENV' -r '$REL'; export PS1="'$NEWPS1'"')
+  bash --rcfile <(echo 'source dune-run -e '$ENV' -r '$REL)
 
 else
 
@@ -145,6 +144,12 @@ else
         source $SUPFILE $SUPARG 2>&1 1>/dev/null
       else
         source $SUPFILE $SUPARG
+      fi
+      # Set the prompt in case this is used to set up a shell.
+      if [ -n "$SUPARG" ]; then
+        export PS1=$MYENV:$SUPARG'> '
+      else
+        export PS1=$MYENV'> '
       fi
     done
   fi

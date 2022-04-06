@@ -44,6 +44,7 @@
 _PROJECT=dunerun
 
 # Assign default configuration.
+_HELP=false
 _INSBAS=${DUNE_INSTALL_DIR:-$HOME/dune/install}
 _BLDBAS=$DUNE_BUILD_DIR
 _BYPKG=true
@@ -57,7 +58,8 @@ while [ $# -gt 0 ]; do
   if [ ${_FLG:0:1} != '-' -o ${#_FLG} -ne 2 ]; then
     _OPTS+=($_FLG)
   elif [ $_FLG = '-h' ]; then
-    _OPTS+=(help)
+    _HELP=true
+    break
   else
     _VAL=$1
     shift
@@ -79,6 +81,26 @@ done
 if [ ${#_MSG} -gt 0 ]; then
   echo "ERROR: $_MSG"
   exit 1
+fi
+
+if [ "$_HELP" = true ]; then
+  echo Usage: $0 [-i INSBAS] [-b BLDBAS] [-p BYPKG] [-v VERSION] [-q QUAL] [ARG1 [ARG2 ...]]
+  echo "  Options:"
+  echo "     INSBAS - Base installation directory."
+  echo "     BLDBAS - Base build directory."
+  echo "      BYPKG - false: install at BLDBAS."
+  echo "              true: install at BLDBAS/dunerun."
+  echo "    VERSION - DUNE product version."
+  echo "       QUAL - DUNE qualifier."
+  echo "  Allowed values for ARGi:"
+  echo "       show - show the configuration"
+  echo "    install - install from the build area"
+  echo "     remove - remove the installation"
+  echo "If no options are provided, install is used."
+  echo "The run-time set up of the the installed package will use the "
+  echo "options values to define the buiuld environment for other packages."
+  echo "Details at: https://github.com/dladams/dunerun"
+  exit 0
 fi
 
 # Assign source directory.
@@ -164,15 +186,7 @@ DOCMAKE=
 DOBUILD=
 DOINSTALL=
 for _OPT in ${_OPTS[@]}; do
-  if [ "$_OPT" = help ]; then
-    echo Usage: $0 [-i INSBAS] [-b BLDBAS] [-p BYPKG] [-v VERSION] [-q QUAL] [OPT1 [OPT2 ...]]
-    echo "  Allowed values for OPTi:"
-    echo "         help or -h - display this message"
-    echo "               show - show the configuration"
-    echo "  install [default] - install from the build area"
-    echo "             remove - removes the installation"
-    exit 0
-  elif [ "$_OPT" = remove ]; then
+  if [ "$_OPT" = remove ]; then
     echo Cleaning...
     if [ -r $_CATFILE ]; then
       _DIRS=()    # Dirs are deleted last

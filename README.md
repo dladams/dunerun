@@ -288,8 +288,6 @@ For example, to set up *dunesw* and *duneproc* and then check the version for th
 <pre>
 dunerun> dune-run -e dunesw,duneproc shell
 setup-dunesw.sh: Setting up dunesw v09_46_00_00 e20:prof
-ERROR: Found no match for product 'python_future_six_request'
-ERROR: Action parsing failed on "setupRequired(python_future_six_request v1_3_1 -q +python3.9)"
 duneproc> duneprocVersion
 2.0.0
 </pre>

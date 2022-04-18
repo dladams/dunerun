@@ -203,6 +203,11 @@ for _OPT in ${_OPTS[@]}; do
         fi
       done
       for _DIR in ${_DIRS[@]}; do
+        _PYC=$_DIR/__pycache__
+        if [ -d $_PYC ]; then
+          echo "  Removing cache $_PYC"
+          rm -rf $_PYC
+        fi
         echo "  Removing directory $_DIR"
         rmdir $_DIR
       done
@@ -257,8 +262,8 @@ for _OPT in ${_OPTS[@]}; do
       fi
     done
     for _PYDIR in $_PYDIRS; do
-      for _FILE in $(ls $_SRCDIR/$_PYDIR/*.py); do
-        _FILE=$(basename $_FILE)
+      for _FILE in $(cd $_SRCDIR/$_PYDIR; find . -name \*.py); do
+        _FILE=${_FILE:2}    # Strip leading './'
         _INFILE=$_SRCDIR/$_PYDIR/$_FILE
         _OUTFILE=$_INSDIR/$_PYDIR/$_FILE
         echo Installing $_OUTFILE
@@ -273,6 +278,15 @@ for _OPT in ${_OPTS[@]}; do
         fi
       done
     done
+    # Append env to setup.py
+    _PYSUP=$_INSDIR/python/setup.py
+    echo "os.environ['DUNERUN_DIR']        = '$_INSDIR'" >>$_PYSUP
+    echo "os.environ['PATH']               = f\"$_INSDIR/bin:{os.getenv('PATH')}\"" >>$_PYSUP
+    echo "os.environ['DUNE_INSTALL_DIR']   = '$_INSBAS'" >>$_PYSUP
+    echo "os.environ['DUNE_BUILD_DIR']     = '$_BLDBAS'" >>$_PYSUP
+    echo "os.environ['DUNE_INSTALL_BYPKG'] = '$_BYPKG'" >>$_PYSUP
+    echo "os.environ['DUNE_VERSION']       = '$_VERS'" >>$_PYSUP
+    echo "os.environ['DUNE_QUALIFIER']     = '$_QUAL'" >>$_PYSUP
     for _FILE in $(ls $_SRCDIR/ipynb/*.ipynb); do
       _FILE=$(basename $_FILE)
       _INFILE=$_SRCDIR/ipynb/$_FILE
@@ -299,7 +313,7 @@ for _OPT in ${_OPTS[@]}; do
     echo export PYTHONPATH=$_INSDIR/python:'$PYTHONPATH' >>$_SUPFILE
     echo export DUNE_INSTALL_DIR=$_INSBAS >>$_SUPFILE
     echo export DUNE_BUILD_DIR=$_BLDBAS >>$_SUPFILE
-    echo export DUNE_INSTALL_BYPACKAGE=$_BYPKG >>$_SUPFILE
+    echo export DUNE_INSTALL_BYPKG=$_BYPKG >>$_SUPFILE
     echo export DUNE_VERSION=$_VERS >>$_SUPFILE
     echo export DUNE_QUALIFIER=$_QUAL >>$_SUPFILE
     echo "export PS1='dunerun> '" >>$_SUPFILE

@@ -43,7 +43,7 @@ class DuneProxy:
         dune = dunerun.DuneRun('dune', shell=True, lev=lev)
         # If kebereros credentials are not found, try kinit.
         if not self.have_kerberos_credentials():
-            dune.run('kinit')
+            dune.run('echo > kinit')
             if not self.have_kerberos_credentials():
                 print(f"{myname}: Unable to obtain Kerberos credentials. Please run kinit.")
             return False

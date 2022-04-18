@@ -13,3 +13,5 @@ if _dir not in sys.path[1:]:
 else:
     if _dbg: print(f"{_dir} is on sys.path")
 
+########### Following lines appended during installation ##########
+

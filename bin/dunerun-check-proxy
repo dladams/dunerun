@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if ! klist -s; then
+  kinit
+fi
+
+setup kx509
+kx509 --minhours 12
+voms-proxy-init -noregen -rfc -voms dune:/dune/Role=Analysis

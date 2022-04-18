@@ -12,10 +12,38 @@ def findup(startpath, fnam):
         path = os.path.join(insdir, fnam)
         if os.path.exists(path): return path
     return None
+
+def dunerun_find_setup(pkgname='dunerun', special=False, dironly=False):
+    """
+    Return expected path for a package setup file.
+    If special is True, returns setup_<pkgname>.sh in dunerun bin area
+    Otherwise at the dunerun-compliant location
+    Raises an exception if DUNE_INSTALL_DIR does not point to a directory.
+    if dironly is true, returns directory where the setup file resides.
+    Does not check if the setup directory or file exists.
+    """
+    myname = 'dunerun_find_setup'
+    if special:
+        supdir = dunerun_find_setup(dironly=True) + '/bin'
+        if dironly: return supdir
+        supfil = supdir + '/setup-' + pkgname + '.sh'
+        return supfil
+    insbas = os.getenv('DUNE_INSTALL_DIR')
+    if len(insbas) == 0:
+        raise Exception(f"{myname}: ERROR: Env variable DUNE_INSTALL_DIR must de befined.")
+    bypkg = os.getenv('DUNE_INSTALL_BYPKG')
+    if bypkg == 'false':
+        supdir = insbas + '/bin'
+        supfil = supdir + '/setup_' + pkgname + '.sh'
+    else:
+        supdir = insbas + '/' + pkgname
+        supfil = supdir + '/setup.sh'
+    if dironly: return supdir
+    return supfil
     
 def version():
     """Return package version string"""
-    scom = findup(__file__, os.path.join('bin', 'dunerunVersion'))
+    scom = os.path.join(os.getenv('DUNERUN_DIR'), 'bin', 'dunerunVersion')
     errsuf = f"-from-{__file__}"
     if scom is not None:
         cpr = subprocess.run(scom, capture_output=True)
@@ -36,6 +64,8 @@ class DuneRun:
         senv = '' - Run in bash (no dune set up).
                'dune' - Set up dune env but no products.
                'dunesw' - Set up dunesw.
+               Other string - try to set up as dunerun-compliant package.
+               Sequence of string - Set up any of the above in turn.
         sopt = string passed to setup, e.g. 'e20:prof' for dunesw.
         precoms = Commands run before environment setup.
         shell = If true, all calls to run use the same shell.
@@ -54,55 +84,76 @@ class DuneRun:
         self.lev = lev
         self.pcoms = precoms
         self.scoms = []
-        myname = 'DuneRun'
+        myname = f"{os.getpid()}: DuneRun:ctor"
         # This package may have been set up in python and not the supporting shell
         # so we add a setup of this package.
-        if True:
+        if False:
             sfil = findup(__file__, 'setup.sh')
             if os.path.exists(sfil):
                 if self.dbg>0: print(f"{myname}: Using package setup file {sfil}")
                 self.scoms.append(sfil)
             else:
                 print(f"{myname}: ERROR: Unable to find setup file {sfil}")
-        # Add the environment setup file.
+        # Add the environment setup files.
         if len(senv):
-            sfil = findup(__file__, os.path.join('bin', 'setup-'+senv+'.sh'))
-            if os.path.exists(sfil):
-                if self.dbg>0: print(f"{myname}: Using setup file {sfil}")
-                scom = sfil
-                if len(sopt):
-                    scom = scom + ' ' + sopt
-                self.scoms.append(scom)
+            if type(senv) == str:
+                pkgs = senv.split(',')
             else:
-                print(f"{myname}: ERROR: Unable to find setup file {sfil}")
+                pkgs = senv
+            for pkg in pkgs:
+                sfils = []
+                sfil = dunerun_find_setup(pkg, special=True)
+                if os.path.exists(sfil):
+                    scom = sfil
+                    if len(sopt):
+                        scom = scom + ' ' + sopt
+                    self.scoms.append(scom)
+                else:
+                    sfils.append(sfil)
+                    sfil = dunerun_find_setup(pkg)
+                    if os.path.exists(sfil):
+                        self.scoms.append(sfil)
+                    else:
+                        sfils.append(sfil)
+                        print(f"{myname}: Unable to find any of these setup files:")
+                        for sfil in sfils:
+                            print(f"{myname}:   {sfil}")
+                        continue
+                if self.dbg: print(f"{myname}: Added set up: {scom}")
+        #else:
+            #if self.dbg: print(f"{myname}: No environment specified.")
         if self._shell:
-             signal.signal(signal.SIGUSR1, handler)
+            signal.signal(signal.SIGUSR1, handler)
 
     def run(self, com, a_lev=None):
-        myname ='DuneRun::run'
+        myname =f"{os.getpid()}: DuneRun::run"
         lev = self.lev if a_lev is None else a_lev
         if self._shell:
             if self._popen is None:
                 stderr = None if lev > 0 else subprocess.DEVNULL
                 stdout = None if lev > 1 else subprocess.DEVNULL
+                if self.dbg: print(f"{myname}: Starting subprocess.")
                 self._popen = subprocess.Popen(['/bin/bash'], stdin=subprocess.PIPE, stdout=stdout, stderr=stderr, text=True)
                 for pcom in self.pcoms:
+                    if self.dbg: print(f"{myname}: Sourcing {pcom}")
                     self.run(pcom)
                 for scom in self.scoms:
+                    if self.dbg: print(f"{myname}: Sourcing {scom}")
                     self.run(f"source {scom}")
             sigcom = f"kill -{signal.SIGUSR1} {os.getpid()}"
             if self.dbg: print(f"{myname}: Executing command {com}")
             self._popen.stdin.write(com + '\n')
             self._popen.stdin.write(sigcom + '\n')
             self._popen.stdin.flush()
+            nsleep = 0
             while True:
                 if len(sigrecs):
                     sig = sigrecs.pop()
-                    #if self.dbg: print(f"{myname}: Received signal {sig}")
                     if sig == signal.SIGUSR1: break
                 else:
-                    #if self.dbg: print(f"{myname}: Sleeping")
+                    if self.dbg and nsleep: print(f"{myname}: Sleeping...")
                     time.sleep(1)
+                    nsleep = nsleep + 1
             sys.stdout.flush()
         else:
             line = ''
@@ -117,7 +168,7 @@ class DuneRun:
             subprocess.run(['bash', '-c', line], stdout=stdout, stderr=stderr)
 
     def __del__(self):
-        myname = 'DuneRun::dtor'
+        myname = f"{os.getpid()}: DuneRun::dtor"
         if self._popen is not None and self._popen.poll() is None:
             if self.dbg: print(f"{myname}: Terminating process {self._popen.pid}")
             self._popen.terminate()

@@ -1,9 +1,39 @@
 #!/bin/bash
 
-if ! klist -s; then
-  kinit
+# dunerun-check-proxy
+#
+# David Adams
+# April 2022
+#
+# Check if user has VOMS pvoxy with lifetime lonber than
+# TMIN. If not, get it.
+
+TMIN=${1:-10000}
+
+if [ "$TMIN" = "-h" ]; then
+  echo Usage: $0 [TMIN]
+  echo "  TMIN [10000] - Minimum proxy lifetime in sec."
+  exit 0
 fi
 
-setup kx509
-kx509 --minhours 12
-voms-proxy-init -noregen -rfc -voms dune:/dune/Role=Analysis
+TREM=$(voms-proxy-info -actimeleft 2>/dev/null)
+TREM=${TREM:-0}
+if [ $TREM -lt $TMIN ]; then
+  if ! klist -s; then
+    kinit
+  fi
+  source $(dirname $0)/setup-dune.sh
+  setup kx509
+  kx509 --minhours 12
+  voms-proxy-init -noregen -rfc -voms dune:/dune/Role=Analysis
+fi
+
+TREM=$(voms-proxy-info -actimeleft)
+TREM=${TREM:-0}
+if [ $TREM -lt $(($TMIN-10)) ]; then
+  echo Unable to obtain VOMS proxy.
+  exit 1
+else
+  voms-proxy-info
+  exit 0
+fi

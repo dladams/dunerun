@@ -59,17 +59,19 @@ The following classes are provided in python module dunerun:
 </pre>
 To learn more about the command *dune-run*, use the -h option:
 <pre>
-> dune-run -h
+duneproc> dune-run -h
 Usage: /home/dladams/proc/install/v09_46_00_00/dunerun/bin/dune-run [-e ENV] [-r REL] [-d LEVEL] COM
 Runs command COM in the environment defined by "source setup-ENV.sh REL"
-  ENV - Environment name.
-        Provided here:
+  ENV - Environment name is any of
           dune - Sets up dune w/o any packages.
-          dunesw - Sets up dune w/ dunesw with argument REL
+          dunesw - Sets up dune w/ dunesw with argument REL.
           dunebuild - Sets up dunesw with argument REL plus packages
-                      needed to build other DUNE packages (cmake, studio)
+                      needed to build other DUNE packages (cmake, studio).
+          pkgname - Name of any package installed alngside dunerun.
+          dunex,pkg1,pkg2... - Where dunex is any of dune, dunesw, dunebuild
+                               or omitted and pkgi is any of pkgname.
         If undefined or '.', the command is run without setup.
-        Default is env variable DUNESW_SUPPORT_ENV or dunesw.
+        Default is dunesw.
   REL - Release tag passed to the environment setup script.
         For dunesw, this can be
           -- VERS or VERS:QUAL where VERS is the version and QUAL is the
@@ -84,7 +86,7 @@ Runs command COM in the environment defined by "source setup-ENV.sh REL"
           1 - Command is executed with informational messages.
           2 - Command and infomational messages are displayed w/o execution.
 Command 'shell' starts an interactive bash shell in the environment.
-[dladams@jupyter-dladams dunerun]$ 
+duneproc> 
 </pre>
 The environment *dune* locates the DUNE/larsoft software without setting up any packages. This is useful for issuing the usual ups command to see what packages are available, e.g.
 <pre>
@@ -288,8 +290,6 @@ For example, to set up *dunesw* and *duneproc* and then check the version for th
 <pre>
 dunerun> dune-run -e dunesw,duneproc shell
 setup-dunesw.sh: Setting up dunesw v09_46_00_00 e20:prof
-ERROR: Found no match for product 'python_future_six_request'
-ERROR: Action parsing failed on "setupRequired(python_future_six_request v1_3_1 -q +python3.9)"
 duneproc> duneprocVersion
 2.0.0
 </pre>

@@ -27,7 +27,9 @@ done
 
 if [ $NONE = true ]; then
   VERS=true
-  QUAL=true
+  if [ -n "$DUNE_QUALIFIER" ]; then
+    QUAL=true
+  fi
 fi
 
 if [ $HELP = true ]; then

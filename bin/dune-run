@@ -19,9 +19,9 @@ while [[ $# -gt 0 ]]; do
     echo "          dunesw - Sets up dune w/ dunesw with argument REL."
     echo "          dunebuild - Sets up dunesw with argument REL plus packages"
     echo "                      needed to build other DUNE packages (cmake, studio)."
-    echo "          pkgname - Name of any package installed alngside dunerun."
-    echo "          dunex,pkg1,pkg2... - Where dunex is any of dune, dunesw, dunebuild"
-    echo "                               or omitted and pkgi is any of pkgname."
+    echo "          pkgname - Name of any analyis package installed alongside dunerun."
+    echo "          xrd542 - Switch to version of xrootd that can stream hdf5."
+    echo "          pkg1,pkg2... - Sensible list of packages to set up in turn."
     echo "        If '.', the command is run without setup."
     echo "        Default is dunesw."
     echo "  REL - Release tag passed to the environment setup script."
@@ -61,20 +61,14 @@ MYNAME="dune-run:"
 if [ $LEVEL -gt 0 ]; then
   echo "$MYNAME ENV: $ENV"
   echo "$MYNAME REL: $REL"
+  echo "$MYNAME LEVEL: $LEVEL"
   echo "$MYNAME COM: $@"
 fi
 
 if [ "$COM" = shell ]; then
   if [ $LEVEL -gt 0 ]; then
     echo "$MYNAME Starting shell..."
-  fi
-  NEWPS1=$ENV
-  if [ -n "$REL" ]; then
-    NEWPS1=$NEWPS1-$REL
-  fi
-  NEWPS1=${NEWPS1}'> '
-  if [ $LEVEL -gt 0 ]; then
-    echo "$MYNAME Setting prompt $NEWPS1"
+    echo "$MYNAME User prompt is $PS1"
   fi
   bash --rcfile <(echo 'source dune-run -e '$ENV' -r '$REL)
 
@@ -138,19 +132,20 @@ else
       fi
       # Set up the package.
       if [ $LEVEL -gt 0 ]; then echo $MYNAME Setting up $MYENV $SUPARG; fi
+      PS1=
       if [ $LEVEL -eq 2 ]; then
-        echo $MYNAME '>' source $SUPFILE $SUPARG 2>&1 1>/dev/null
+        echo $MYNAME '>' source $SUPFILE $SUPARG '2>&1 1>/dev/null'
       elif [ $LEVEL -eq 0 ]; then
         source $SUPFILE $SUPARG 2>&1 1>/dev/null
       else
         source $SUPFILE $SUPARG
       fi
       # Set the prompt in case this is used to set up a shell.
-      if [ -n "$SUPARG" ]; then
-        export PS1=$MYENV:$SUPARG'> '
-      else
-        export PS1=$MYENV'> '
+      # If the setup script does not define PS1, use the pCKAGE NAME.Dse NEWPS1 if the setup script defined it.
+      if [ -z "$PS1" ]; then
+        PS1=$MYENV'> '
       fi
+      export PS1
     done
   fi
 

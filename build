@@ -107,9 +107,13 @@ fi
 _SRCDIR=$(dirname $0)
 _SRCDIR=$(readlink -f $_SRCDIR)
 
+# In case version is a directory, use the base of the directory as the version name.
+_VERN=$(basename $_VERS)
+
 # Assign qualifier.
+# But not if the VERSION is a file path to a local release.
 if [ -z "$_QUAL" ]; then
-  if [ -n "$_VERS" ]; then
+  if [ -n "$_VERS" -a "$_VERS" = "$_VERN" ]; then
     _QUAL=e20:prof
   else
     _QUAL=
@@ -119,16 +123,16 @@ fi
 # If %VERSION% appears in the base installation or build directories, then
 # the version must be defined.
 if echo $_INSBAS $_BLDBAS | grep %VERSION% 1>/dev/null 2>/dev/null; then
-  if [ -z "$_VERS" ]; then
+  if [ -z "$_VERN" ]; then
     echo ERROR: DUNE version must be defined.
     exit 1
   fi
-  _INSBAS=$(echo $_INSBAS | sed "s/%VERSION%/$_VERS/g")
-  _BLDBAS=$(echo $_BLDBAS | sed "s/%VERSION%/$_VERS/g")
+  _INSBAS=$(echo $_INSBAS | sed "s/%VERSION%/$_VERN/g")
+  _BLDBAS=$(echo $_BLDBAS | sed "s/%VERSION%/$_VERN/g")
 fi
   
 # If %QUAL% appears in the base installation or build directories, then
-# the version must be defined.
+# the qualifier must be defined.
 if echo $_INSBAS $_BLDBAS | grep %QUAL% 1>/dev/null 2>/dev/null; then
   if [ -z "$_QUAL" ]; then
     echo ERROR: DUNE qualifier must be defined.
@@ -171,10 +175,6 @@ _CATFILE=$_INSDIR/.$_PROJECT.cat
 # Check DUNE version and qualifier.
 if [ -z "$_VERS" ]; then
   echo "ERROR: DUNE_VERSION must be defined or set with -v"
-  exit 1
-fi
-if [ -z "$_QUAL" ]; then
-  echo "ERROR: DUNE_QUALIFIER must be defined or set with -q"
   exit 1
 fi
 

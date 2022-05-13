@@ -36,7 +36,7 @@ while [[ $# -gt 0 ]]; do
     echo "  LEVEL - 0 - Command is executed with no output from this script or"
     echo "              from the setup (default)"
     echo "          1 - Command is executed with informational messages."
-    echo "          2 - Command and infomational messages are displayed w/o execution."
+    echo "          2 - Command and informational messages are displayed w/o execution."
     echo "Command 'shell' starts an interactive bash shell in the environment."
     exit 0
   elif [ "$ARG" = "-r" ]; then
@@ -70,7 +70,7 @@ if [ "$COM" = shell ]; then
     echo "$MYNAME Starting shell..."
     echo "$MYNAME User prompt is $PS1"
   fi
-  bash --rcfile <(echo 'source dune-run -e '$ENV' -r '$REL)
+  bash --rcfile <(echo 'source dune-run -d '$LEVEL' -e '$ENV' -r '$REL)
 
 else
 

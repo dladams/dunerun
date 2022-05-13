@@ -6,8 +6,10 @@ if [ -r $XRDIR_TOM ]; then
 elif [ -r $XRDIR_LOC ]; then
   XRDIR=$XRDIR_LOC
 else
-  TARFIL=xrootd542.tar.gz
-  SRC=dunegpvm01.fnal.gov:$TARFIL
+  #TARFIL=xrootd542.tar.gzdd
+  #SRC=dunegpvm01.fnal.gov:$TARFIL
+  TARFIL=xrd542.tgz
+  SRC=dunegpvm01.fnal.gov:/dune/app/users/trj/xrootd542/$TARFIL
   DST=$(dirname $XRDIR_LOC)
   echo Copying $SRC to $DST
   mkdir -p $DST
@@ -16,6 +18,8 @@ else
   cd $DST
   echo Untarring
   tar -zxf $TARFIL
+  mv install/* .
+  rmdir install
   cd $SAVEPWD
   if [ -r $XRDIR_LOC ]; then
     XRDIR=$XRDIR_LOC
@@ -26,5 +30,5 @@ else
 fi
 
 export LD_LIBRARY_PATH=$XRDIR:${LD_LIBRARY_PATH}
-export LD_PRELOAD=$XRDIR/libXrdPosixPreload.so
+export LD_PRELOAD=$XRDIR/libXrdPosixPreload.so:${LD_PRELOAD}
 

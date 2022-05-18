@@ -2,7 +2,7 @@
 
 David Adams  
 May 2022  
-Version 1.13.1 
+Version 1.15.0  
   
 This package provides upport for using different versions of DUNE software from the linux command line and python.
 It also facilitates the building and use of user packages that follw the [dunerun build convention](./build_convention.md).
@@ -25,10 +25,17 @@ Thus sourcing this setup before building subsequent (dune-run-conformant) packag
 packages will be built and installed in consistent manner.
 
 If the install and build path include the special fields %VERSION% and %QUAL%, these are
-respectively replaced with \<dune-version> and \<dune-qualifier>.
+respectively replaced with rectified version of \<dune-version> and \<dune-qualifier>.
+Rectified means that colons are replaced with underscores.
 The substituted values are exported in the generated setup.
 The build directory is not presently used here but is specified so that it can be echoed in
 the setup file and used in the build of other packages.
+
+If the install or build paths include fields matching the rectified environment values of the version or qualifier,
+then those values are also respectively replaced with \<dune-version> and \<dune-qualifier>.
+Thus, if dunerun for one version may be set up before installing another, the same conventions will
+be used for naming the build and installatioin directories.
+To avoid this, unset DUNE_VERSION and DUNE_QUALIFIER before the build command.
 
 ## Setting up
 

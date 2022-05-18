@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# dunerun-check-cvmfs
+#
+# David Adams
+# May 2022
+#
+# Check that the cvmfs directories holding DUNE products and its 
+# dependencies are mounted.
+
+if test -n "$1"; then
+  echo Usage: $0
+  echo Check if the expected cvmfs directories are available.
+  exit 0
+fi
+
+BAD=
+for SUBPTH in larsoft.opensciencegrid.org dune.opensciencegrid.org; do
+  PTH=/cvmfs/$SUBPTH
+  echo
+  echo Checking $PTH
+  if ! ls -ls -r $PTH; then
+    BAD="$BAD $SUBPTH"
+  fi
+done
+
+echo
+if test -z "$BAD"; then
+  echo All OK.
+  exit 0
+fi
+
+echo "ERROR: missing cvmfs paths:"
+for SUBPTH in $BAD; do
+  echo "  /cvmfs/$SUBPTH"
+done
+
+if hostname | grep jupyter; then
+  echo
+  echo Restarting this jupyter server might help.
+fi
+
+
+exit 1

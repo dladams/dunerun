@@ -117,9 +117,7 @@ if [ "$_HELP" = true ]; then
 fi
 
 # Update the lists of replacement patterns if the version or qualifier have changed.
-echo Check $DUNE_VERSION, $_VERS
 if [ -n "$DUNE_VERSION" -a "$DUNE_VERSION" != $_VERS ]; then
-  echo Adding to-be-replaced version $DUNE_VERSION
   _VERSREPS+=($(rectify $DUNE_VERSION))
 fi
 if [ -n "$DUNE_QUAL" -a "$DUNE_QUAL" != $_QUAL ]; then
@@ -147,7 +145,6 @@ fi
 # replace it with the rectified version.
 for PAT in ${_VERSREPS[@]}; do
   REP=$(rectify $_VERN)
-  echo Replacing $PAT with $REP
   if echo $_INSBAS $_BLDBAS | grep $PAT 1>/dev/null 2>/dev/null; then
     if [ -z "$_VERN" ]; then
       echo ERROR: DUNE version must be defined.
@@ -162,7 +159,6 @@ done
 # replace it with the rectified qualifier.
 for PAT in ${_QUALREPS[@]}; do
   REP=$(rectify $_QUAL)
-  echo Replacing $PAT with $REP
   if echo $_INSBAS $_BLDBAS | grep $PAT 1>/dev/null 2>/dev/null; then
     if [ -z "$_VERN" ]; then
       echo ERROR: DUNE version must be defined.

@@ -1,0 +1,147 @@
+#!/bin/bash
+
+# David Adams
+# May 2022
+#
+# Script to test dunerun
+
+DEFVER=v09_51_00d00
+
+if [ "$1" = "-h" ]; then
+  echo "Usage: $0"
+  echo "   or: $0 DIR [VER]"
+  echo "  DIR - Installation directory base."
+  echo "  VER - DUNE SW version [$DEFVER]."
+  echo Create a test dunerun installation at DIR/VER and exercise it
+  echo including most of the commands in the dunerun README.
+  echo The last test requires a kerberos ticket and may prompt for
+  echo a password if it is not found.
+  echo If no arguments are given, the test are performed with the
+  echo currently set up dunerun.
+  exit 0
+fi
+
+# Function to show a block header and start command echoing.
+hecho() {
+  { set +x; } 2>/dev/null
+  echo
+  echo '-------------------------------------------------------------------------------'
+  echo dunerun-test-all: $*
+  echo '-------------------------------------------------------------------------------'
+  set -x
+}
+
+PRE="dunerun-test-all:"
+PS4='+++ '
+
+# Exit on any error
+set -e
+
+if [ -z "$1" -o "$1" = . ]; then
+  DOINSTALL=false
+  MSG="using installed dunerun"
+else
+  DOINSTALL=true
+  MSG="with installation"
+fi
+
+hecho $(date): Begin test $MSG.
+{ set +x; } 2>/dev/null
+
+if [ $DOINSTALL = true ]; then
+
+  hecho Define configuration.
+  BASDIR=${1:-$HOME/test-dunerun}
+  VERS=${2:-${DUNE_VERSION:-$DEFVER}}
+  { set +x; } 2>/dev/null
+  echo "  Base directory: $BASDIR"
+  echo "    DUNE version: $VERS"
+  
+  hecho Check base directory
+  if test -r $BASDIR; then
+    echo $PRE Please remove $BASDIR before running the test.
+    exit 1
+  fi
+  { set +x; } 2>/dev/null
+  
+  hecho Fetch package source
+  mkdir -p $BASDIR
+  cd $BASDIR
+  mkdir pkgs
+  cd pkgs
+  git clone https://github.com/dladams/dunerun.git
+  cd ../..
+  { set +x; } 2>/dev/null
+  
+  hecho Build package
+  $BASDIR/pkgs/dunerun/build -i $BASDIR/install -b $BASDIR/build -v $VERS
+  { set +x; } 2>/dev/null
+  
+  hecho Set up package
+  source $BASDIR/install/dunerun/setup.sh
+  set | grep DUNE_
+  { set +x; } 2>/dev/null
+
+fi
+
+hecho Check setup.
+test -n $DUNERUN_DIR
+test -n $DUNE_VERSION
+dunerunVersion
+{ set +x; } 2>/dev/null
+
+hecho Display setup.
+{ set +x; } 2>/dev/null
+echo "  Installation directory: $DUNERUN_DIR"
+echo "         dunerun version: $(dunerunVersion)"
+echo "            DUNE version: $DUNE_VERSION"
+
+hecho Get general dunerun help
+dunerunHelp
+{ set +x; } 2>/dev/null
+
+hecho Get help on dune-run
+dune-run -h
+{ set +x; } 2>/dev/null
+
+hecho Check cvmfs
+dunerun-check-cvmfs
+{ set +x; } 2>/dev/null
+
+hecho List available versions of dunesw
+dune-run -e dune ups list -aK+ dunesw | grep e20:prof
+{ set +x; } 2>/dev/null
+
+hecho Get dunesw help.
+dune-run -e dunesw duneHelp
+{ set +x; } 2>/dev/null
+
+hecho Get an old version of dunesw help.
+dune-run -e dunesw -r v09_42_04_00:e20:prof duneHelp
+{ set +x; } 2>/dev/null
+
+hecho 'Run the dunesw fcl tests (this takes a while).'
+time dune-run -e dunesw duneTestFcl
+{ set +x; } 2>/dev/null
+
+if [ $DOINSTALL = true ]; then
+
+  hecho 'Install and build duneproc.'
+  cd $BASDIR/pkgs
+  git clone https://github.com/dladams/duneproc.git
+  dune-run -e dunebuild duneproc/build
+  cd ../..
+  { set +x; } 2>/dev/null
+
+  hecho 'Get duneproc help.'
+  dune-run -e dunesw,duneproc duneprocHelp
+  { set +x; } 2>/dev/null
+
+fi
+
+hecho 'Check VOMS proxy'
+dunerun-check-proxy
+{ set +x; } 2>/dev/null
+
+hecho $(date): All tests succeeded. Bye
+{ set +x; } 2>/dev/null

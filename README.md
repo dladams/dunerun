@@ -58,17 +58,22 @@ caller's paths, the setup defines the DUNE build env variables as discussed abov
 After the above setup, the dunerun commands are available. For information about dunerun:
 <pre>
 [dladams@jupyter-dladams console]$ dunerunHelp
-This is dunerun version 1.0.7
+This is dunerun version 1.16.0
 
 It provides the following commands:
-  dunerunHelp - This message.
-  dunerunVersion - Show the installed version of dunerun.
+  dunerunHelp: This message.
+  dunerunVersion: Show package version number.
+  dunerunRelease: Show the DUNE version and qualifier.
   dune-run: Run a command in dune environments.
   dune-timeout: Run command with a timeout.
+  dunerun-check-proxy: Check and, if needed, get VOMS proxy.
+  dunerun-check-cvmfs: Check if cvmfs dirs are mounted.
+  dunerun-test-all: Test dune installation and environment.
 Use option -h for help with any of these.
 
 The following classes are provided in python module dunerun:
-  DuneRun: Run a command in dune environments.
+  dunerun.DuneRun: Run a command in dune environments.
+  dunerun.DuneProxy: Manage VOMS proxy.
 </pre>
 To learn more about the command *dune-run*, use the -h option:
 <pre>
@@ -320,6 +325,18 @@ The python class *DuneRun* in module *dunerun* provides similar fuctionality fro
 * [dunerun](ipynb/dunerun.ipynb) - Introduction to using *DuneRun*
 * [dunedata](ipynb/dunedata.ipynb) - Demonstrates how to find and access DUNE event data
 
+## Package test
+A script is provided to test this package and the current environment. It carries out most of what is described above. To test the current *dunerun* after set up:
+<pre>
+dunerun> dunerun-test-all
+</pre>
+To install and test in a new directory \<testdir>:
+<pre>
+cd &lt;any-directory>
+git clone https://github.com/dladams/dunerun.git
+./bin/dunerun-test-alll &lt;testdir>
+</pre>
+  
 ## Development plans
 
 * Add package sequence set up to *DuneRun*.

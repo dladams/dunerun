@@ -2,7 +2,7 @@
 
 David Adams  
 May 2022  
-Version 1.15.0  
+Version 1.16.0  
   
 This package provides upport for using different versions of DUNE software from the linux command line and python.
 It also facilitates the building and use of user packages that follw the [dunerun build convention](./build_convention.md).

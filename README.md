@@ -334,7 +334,7 @@ To install and test in a new directory \<testdir>:
 <pre>
 cd &lt;any-directory>
 git clone https://github.com/dladams/dunerun.git
-./bin/dunerun-test-alll &lt;testdir>
+dunerun/bin/dunerun-test-alll &lt;testdir>
 </pre>
   
 ## Development plans

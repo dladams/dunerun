@@ -337,6 +337,7 @@ cd &lt;tmp-directory>
 git clone https://github.com/dladams/dunerun.git
 dunerun/bin/dunerun-test-all ./install
 </pre>
+In either case, make sure you have a kerberos certificate before execution to avoid being prompted for that password.
   
 ## Development plans
 

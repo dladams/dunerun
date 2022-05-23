@@ -38,8 +38,8 @@ If the install or build paths include fields matching the rectified environment 
 then those values are also respectively replaced with \<dune-version> and \<dune-qualifier>.
 Thus, setting up dunerun for one version ensures the same conventions are followed for
 unspecified fields in the builds of other versions or qualifiers.
-In particular, constently-named but different install and build directories are used if their names
-incoporate ther DUNE version and qualifier.
+In particular, consistently-named but different install and build directories are used if their names
+incorporate their DUNE version and qualifier.
 To avoid this version and qualify carryover, unset DUNE_VERSION and DUNE_QUALIFIER before the build command.
 
 ## Setting up

@@ -332,9 +332,10 @@ dunerun> dunerun-test-all
 </pre>
 To install and test in a new directory \<testdir>:
 <pre>
-cd &lt;any-directory>
+mkdir &lt;tmp-directory>
+cd &lt;tmp-directory>
 git clone https://github.com/dladams/dunerun.git
-dunerun/bin/dunerun-test-alll &lt;testdir>
+dunerun/bin/dunerun-test-all ./install
 </pre>
   
 ## Development plans

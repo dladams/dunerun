@@ -116,6 +116,31 @@ if [ "$_HELP" = true ]; then
   exit 0
 fi
 
+# Check that the DUNE version is defined.
+# It should be a standard version specifier v_XX... of the full path
+# to a local build.
+if [ -z "$_VERS" ]; then
+  echo "DUNE version must be specified, e.g. with -v"
+  exit 1
+fi
+
+if [ ${_VERS:0:1} = v ]; then
+  echo DUNE version $_VERS is a release.
+elif [ ${_VERS:0:1} = '/' ]; then
+  echo DUNE version $_VERS is a local build directory.
+  if [ ! -d $_VERS ]; then
+    echo "ERROR: Local build directory does not exist"
+    exit 2
+  fi
+  if [ ! -r $_VERS/setup.sh -a ! -r $_VERS/dunesetup.sh ]; then
+    echo "ERROR: Local build directory must contain either setup.sh or dunesetup.sh"
+    exit 3
+  fi
+else
+  echo "ERROR: DUNE version $_VERS is not valid."
+  exit 4
+fi
+
 # Update the lists of replacement patterns if the version or qualifier have changed.
 if [ -n "$DUNE_VERSION" -a "$DUNE_VERSION" != $_VERS ]; then
   _VERSREPS+=($(rectify $DUNE_VERSION))

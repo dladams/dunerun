@@ -154,8 +154,11 @@ else
     if [ $LEVEL -eq 2 ]; then
       echo $MYNAME '>' $@
     else
-      if [ ${#@} > 0 ]; then
+      if [ ${#@} -gt 0 ]; then
         $@
+        if [ $? -ne 0 ]; then
+          echo Failed command: $@
+        fi
       fi
     fi
   fi

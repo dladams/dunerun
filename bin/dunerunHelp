@@ -17,6 +17,7 @@ echo "  dune-run: Run a command in dune environments."
 echo "  dune-timeout: Run command with a timeout."
 echo "  dunerun-check-proxy: Check and, if needed, get VOMS proxy."
 echo "  dunerun-check-cvmfs: Check if cvmfs dirs are mounted."
+echo "  dunerun-check-xrootd-streaming: Check streaming over xrootd."
 echo "  dunerun-test-all: Test dune installation and environment."
 echo "Use option -h for help with any of these."
 echo

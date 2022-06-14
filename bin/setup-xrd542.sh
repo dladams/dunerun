@@ -31,4 +31,4 @@ fi
 
 export LD_LIBRARY_PATH=$XRDIR:${LD_LIBRARY_PATH}
 export LD_PRELOAD=$XRDIR/libXrdPosixPreload.so:${LD_PRELOAD}
-
+echo WARNING: xrd542 is obsolete. Please switch to xrdhdf5.

@@ -20,7 +20,7 @@ while [[ $# -gt 0 ]]; do
     echo "          dunebuild - Sets up dunesw with argument REL plus packages"
     echo "                      needed to build other DUNE packages (cmake, studio)."
     echo "          pkgname - Name of any analyis package installed alongside dunerun."
-    echo "          xrd542 - Switch to version of xrootd that can stream hdf5."
+    echo "          xrdhdf5 - Switch to version of xrootd that can stream hdf5."
     echo "          pkg1,pkg2... - Sensible list of packages to set up in turn."
     echo "        If '.', the command is run without setup."
     echo "        Default is dunesw."

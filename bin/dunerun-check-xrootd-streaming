@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# dunerun-check-xrhdf5-streaming
+#
+# David Adams
+# June 2022
+#
+# Check that we can stream an hdf5 file with xrootd.
+# dependencies are mounted.
+
+if test "$1" = "-h"; then
+  echo Usage: $0 [FNAM]
+  echo Check if an hdf5 file can be streamed.
+  exit 0
+fi
+
+FNAM=${1:-root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/dune/tape_backed/dunepro/vd-coldbox-bottom/raw/2022/detector/test/None/00/01/26/81/np02_bde_coldbox_run012681_0000_dataflow0_20220513T112209.hdf5}
+if h5dump-shared -Ai $FNAM; then
+  echo All OK
+  exit 0
+else
+  echo Stream test failed.
+  exit 1
+fi

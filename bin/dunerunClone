@@ -1,0 +1,30 @@
+# dunerunClone
+#
+# David Adams
+# June 2022
+#
+# Clone an analysis package into a specified directory.
+
+PKGNAM=${1:--h}
+DIR=${2:-.}
+
+if [ "$PKGNAM" = "-h" ]; then
+  echo Usage: $0 PKGNAM [DIR]
+  echo echo Clones package PKGNAM into DIR [.].
+  exit 0
+fi
+
+if [ $(whoami) = dladams ]; then
+  SRC=git@github.com:dladams/$PKGNAM.git
+else
+  src=https://github.com/dladams/$PKGNAM.git
+fi
+
+if [ -r $DIR/$PKGNAM ]; then
+  echo Updating $DIR/$PKGNAM
+  cd $DIR/$PKGNAM && git pull
+else
+  echo Cloning into $DIR/$PKGNAM
+  cd $DIR && git clone $SRC
+fi
+

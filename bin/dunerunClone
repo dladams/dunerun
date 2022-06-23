@@ -5,26 +5,32 @@
 #
 # Clone an analysis package into a specified directory.
 
-PKGNAM=${1:--h}
-DIR=${2:-.}
+PKGPTH=${1:--h}
 
 if [ "$PKGNAM" = "-h" ]; then
-  echo Usage: $0 PKGNAM [DIR]
-  echo echo Clones package PKGNAM into DIR [.].
+  echo Usage: $0 PKGDIR/PKGNAM [DIR]
+  echo "  Clones package PKGNAM at PKGDIR."
+  echo "  If the directory already exists, it is updated."
   exit 0
 fi
 
+# If existing, do a pull.
+if [ -r $PKGPTH ]; then
+  echo Updating $PKGPTH
+  cd $PKGPTH && git pull
+  exit $?
+fi
+
+# Use ssh for the owner and https for everyone else.
+PKGNAM=$(basename $PKGPTH)
 if [ $(whoami) = dladams ]; then
-  SRC=git@github.com:dladams/$PKGNAM.git
+  PKGGIT=git@github.com:dladams/$PKGNAM.git
 else
-  src=https://github.com/dladams/$PKGNAM.git
+  PKGGIT=https://github.com/dladams/$PKGNAM.git
 fi
 
-if [ -r $DIR/$PKGNAM ]; then
-  echo Updating $DIR/$PKGNAM
-  cd $DIR/$PKGNAM && git pull
-else
-  echo Cloning into $DIR/$PKGNAM
-  cd $DIR && git clone $SRC
-fi
-
+# Otherwise, clone the package.
+PKGDIR=$(dirname $PKGPTH)
+echo Cloning into $PKGPTH
+cd $PKGDIR && git clone $PKGGIT
+exit $?

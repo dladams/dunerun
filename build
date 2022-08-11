@@ -157,13 +157,11 @@ _SRCDIR=$(readlink -f $_SRCDIR)
 _VERN=$(basename $_VERS)
 
 # Assign qualifier.
-# But not if the VERSION is a file path to a local release.
-if [ -z "$_QUAL" ]; then
-  if [ -n "$_VERS" -a "$_VERS" = "$_VERN" ]; then
+# No qualifier if the VERSION is a file path to a local release.
+if [ "$_VERS" != "$_VERN" ]; then
+  _QUAL=
+elif [ -z "$_QUAL" -a -n "$_VERS" ]; then
     _QUAL=e20:prof
-  else
-    _QUAL=
-  fi
 fi
 
 # If %VERSION% or the old version appears in the base installation or build, then

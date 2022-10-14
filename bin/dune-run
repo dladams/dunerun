@@ -88,11 +88,16 @@ else
       # Array of failed setup file locations.
       NOTFS=()
       SUPARG=
-      # Check if there is a setup define here for the product.
+      # Check if there is a setup defined here for the product.
       # Allowed values include dune, dunesw and dunebuild.
-      SUPFILE=$DUNERUN_DIR/bin/setup-$MYENV.sh
-      if [ -r $SUPFILE ]; then
+      SUPFILE_LOCAL=./setup-$MYENV.sh
+      SUPFILE_DUNERUN=$DUNERUN_DIR/bin/setup-$MYENV.sh
+      if [ -r $SUPFILE_LOCAL ]; then
         SUPARG=$REL
+        SUPFILE=$SUPFILE_LOCAL
+      elif [ -r $SUPFILE_DUNERUN ]; then
+        SUPARG=$REL
+        SUPFILE=$SUPFILE_DUNERUN
       else
         NOTFS=(${NOTFS[@]} $SUPFILE)
         SUPFILE=

@@ -1,8 +1,8 @@
 # dunerun
 
 David Adams  
-May 2022  
-Version 1.16.0  
+October 2022  
+Version 2.0.1  
   
 This package provides upport for using different versions of DUNE software from the linux command line and python.
 It also facilitates the building and use of user packages that follw the [dunerun build convention](./build_convention.md).
@@ -34,13 +34,10 @@ The substituted values are exported in the generated setup.
 The build directory is not presently used here but is specified so that it can be echoed in
 the setup file and used in the build of other packages.
 
-If the install or build paths include fields matching the rectified environment values of the version or qualifier,
-then those values are also respectively replaced with \<dune-version> and \<dune-qualifier>.
-Thus, setting up dunerun for one version ensures the same conventions are followed for
-unspecified fields in the builds of other versions or qualifiers.
-In particular, consistently-named but different install and build directories are used if their names
-incorporate their DUNE version and qualifier.
-To avoid this version and qualify carryover, unset DUNE_VERSION and DUNE_QUALIFIER before the build command.
+The dunerun build env variable are only used if the version is *not* specified on the command line.
+If it is, the the default install location is $DUNE_INSTALL_BASE or $HOME/dune/install if the
+former is not defined.
+The build directory is $DUNE_BUILD_BASE or /tmp/$USER/dunerun/build/%VERSION%.
 
 ## Setting up
 

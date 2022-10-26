@@ -65,7 +65,7 @@ fix_version_qualifier() {
   NAME=$1
   VERS=$(rectify $2)
   QUAL=$(rectify $3)
-  SOUT=$(echo $NAME | sed s"#%VERS%#$VERS#g" | sed "s#%QUAL%#$QUAL#g")
+  SOUT=$(echo $NAME | sed s"#%VERSION%#$VERS#g" | sed "s#%QUAL%#$QUAL#g")
   echo $SOUT
 }
 
@@ -147,15 +147,13 @@ if [ -n "$VERS" ]; then
   fi
   # INSBAS
   if [ -z "$INSBAS" ]; then
-    INSBAS=${DUNE_INSTALL_BASE:-$HOME/dune/install/%VERS%}
+    INSBAS=${DUNE_INSTALL_BASE:-$HOME/dune/install/%VERSION%}
   fi
-  echo AAA $INSBAS
   echo fix_version_qualifier $INSBAS $VERS $QUAL
   INSBAS=$(fix_version_qualifier $INSBAS $VERN $QUAL)
-  echo BBB $INSBAS
   # BLDBAS
   if [ -z "$BLDBAS" ]; then
-    BLDBAS=${DUNE_BUILD_BASE:-/tmp/$USER/dunerun/build/%VERS%}
+    BLDBAS=${DUNE_BUILD_BASE:-/tmp/$USER/dunerun/build/%VERSION%}
   fi
   BLDBAS=$(fix_version_qualifier $BLDBAS $VERN $QUAL)
   # BYPKG

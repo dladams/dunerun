@@ -9,10 +9,11 @@
 ENV=dunesw
 REL=$(dunerunRelease)
 LEVEL=0
+ERREXIT=
 while [[ $# -gt 0 ]]; do
   ARG=$1
   if [ "$ARG" = "-h" ]; then
-    echo "Usage: $0 [-e ENV] [-r REL] [-d LEVEL] COM"
+    echo "Usage: $0 [-e ENV] [-r REL] [-d LEVEL] [-x] COM"
     echo "Runs command COM in the environment defined by \"source setup-ENV.sh REL\""
     echo "  ENV - Environment name is any of"
     echo "          dune - Sets up dune w/o any packages."
@@ -38,6 +39,7 @@ while [[ $# -gt 0 ]]; do
     echo "          1 - Command is executed with informational messages."
     echo "          2 - Command and informational messages are displayed w/o execution."
     echo "Command 'shell' starts an interactive bash shell in the environment."
+    echo "If the flag -x is given, exit the current shell if there is an error."
     exit 0
   elif [ "$ARG" = "-r" ]; then
     shift
@@ -51,6 +53,9 @@ while [[ $# -gt 0 ]]; do
     shift
     LEVEL=${1:-0}
     shift
+  elif [ "$ARG" = "-x" ]; then
+    shift
+    ERREXIT=true
   else
     COM="$@"
     break
@@ -70,7 +75,10 @@ if [ "$COM" = shell ]; then
     echo "$MYNAME Starting shell..."
     echo "$MYNAME User prompt is $PS1"
   fi
-  bash --rcfile <(echo 'source dune-run -d '$LEVEL' -e '$ENV' -r '$REL)
+  bash --rcfile <(echo 'source dune-run -d '$LEVEL' -e '$ENV' -r '$REL -x)
+  if [ $? -eq 0 ]; then
+    echo "$MYNAME Exited dunerun shell with env $ENV."
+  fi
 
 else
 
@@ -131,6 +139,10 @@ else
         if [ $SAMEREL = false ]; then
           echo "$MYNAME Local packages are not set up because requested and installed"
           echo "$MYNAME release tags do not match: $REL != $(dunerunRelease)"
+        fi
+        if [ -n "$ERREXIT" ]; then
+          echo "$MYNAME Exiting shell."
+          exit 14
         fi
         RUNCOM=false
         break

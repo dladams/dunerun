@@ -8,4 +8,4 @@
 # Returns the version string for the dunerun package.
 # This is where the version is maintained.
 
-echo 2.0.1
+echo 2.0.2

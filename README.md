@@ -32,6 +32,25 @@ Thus setting up this package (sourcing its setup file) before building subsequen
 packages ensures those packages will be built and installed in a consistent manner.
 
 The command *dunerun-show-buildenv* may be use to show the DUNE build env.
+Here are examples using a DUNE release:
+<pre>
+dunerun> dunerun-show-buildenv 
+       DUNE_VERSION: v09_62_00d01
+     DUNE_QUALIFIER: e20:prof
+   DUNE_INSTALL_DIR: /home/dladams/dune/install/v09_62_00d01
+     DUNE_BUILD_DIR: /tmp/dladams/dunerun/build/v09_62_00d01
+ DUNE_INSTALL_BYPKG: true
+</pre>
+and a local build:
+<pre>
+dunerun> dunerun-show-buildenv
+      DUNE_VERSION: /home/dladams/proc/build/dev01
+    DUNE_QUALIFIER: no-qualifier
+  DUNE_INSTALL_DIR: /home/dladams/dune/install/dev01
+    DUNE_BUILD_DIR: /tmp/dladams/dunerun/build/dev01
+DUNE_INSTALL_BYPKG: true
+</pre>
+In the second case, the "version" is the directory where the local build was made and the value for qualifier does not matter.
 
 If the install and build path include the special fields %VERSION% and/or %QUAL%, these are
 respectively replaced with rectified versions of \<dune-version> and \<dune-qualifier>.

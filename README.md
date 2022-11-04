@@ -35,7 +35,7 @@ The build directory is not presently used here but is specified so that it can b
 the setup file and used in the build of other packages.
 
 The dunerun build env variable are only used if the version is *not* specified on the command line.
-If it is, the the default install location is $DUNE_INSTALL_BASE or $HOME/dune/install if the
+If it is, the the default install location is $DUNE_INSTALL_BASE or $HOME/dune/install/%VERSION% if the
 former is not defined.
 The build directory is $DUNE_BUILD_BASE or /tmp/$USER/dunerun/build/%VERSION%.
 

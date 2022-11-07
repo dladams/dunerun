@@ -27,7 +27,7 @@ done
 
 if [ $NONE = true ]; then
   VERS=true
-  if [ -n "$DUNE_QUALIFIER" ]; then
+  if [ -n "$DUNE_QUALIFIER" -a "$DUNE_QUALIFIER" != no-qualifier ]; then
     QUAL=true
   fi
 fi

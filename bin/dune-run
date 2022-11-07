@@ -56,6 +56,9 @@ while [[ $# -gt 0 ]]; do
   elif [ "$ARG" = "-x" ]; then
     shift
     ERREXIT=true
+  elif [ "${ARG:0:1}" = "-" ]; then
+    echo Invalid flag: $ARG
+    exit 1
   else
     COM="$@"
     break

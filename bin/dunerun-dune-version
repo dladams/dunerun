@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# dunerun-dune-version
+#
+# David Adams
+# June 2023
+#
+# Return the DUNE version string.
+
+MYNAME=$(basename $0)
+DOINT=
+
+if [[ $1 = -h ]]; then
+  echo Usage: $MYNAME [-h] [-i]
+  echo "  -h: Show this message."
+  echo "  -i: Return the version as an integer."
+  exit 0
+elif [[ $1 = -i ]]; then
+  DOINT=true
+elif [[ $# > 0 ]]; then
+  echo $MYNAME: Invalid arguments: $*
+  exit 1
+fi
+
+VER=$(echo $DUNESW_VERSION)
+if [[ -z $VER ]]; then
+  echo Please set up dunesw. >&2
+  exit 1
+fi
+
+if [[ -n $DOINT ]]; then
+  VER=$(echo $VER | sed 's/[v,_,d]//g')
+  while [[ -n $VER && ${VER:0:1} = 0 ]]; do VER=${VER:1}; done
+fi
+
+echo $VER
